@@ -2,11 +2,11 @@ package EECS3311_CourseProject.backend;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
     
-Class User defines the client who requests and cancels appointments.
+Abstract class User defines User behaviour and characteristics
     
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-public class User {
+abstract public class User {
     // private attributes
 
     public User(){
