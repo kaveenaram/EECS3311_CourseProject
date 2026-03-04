@@ -1,6 +1,6 @@
 from .system_policy import SystemPolicy
-from .patterns.observer.notification_service import NotificationService
-from .consultant.py import Consultant
+from patterns.observer.notification_service import NotificationService
+from .consultant import Consultant
 
 class Admin:
 
@@ -10,7 +10,7 @@ class Admin:
 
   def approveConsultant(self, consultant: Consultant):
     consultant.approved = True
-    self.notifier.notify_observers(
+    self.notifier.notifyObservers(
             f"Consultant {consultant.name} has been approved by the Admin.")
 
   def updatePolicies(self, cancellation_rules: str = None,
@@ -18,14 +18,14 @@ class Admin:
                    refund_policy: str = None): #lets admnin update cancellation rules, pricing strategy and refund policy. Each parameter is optional so Admin can update one or multiple policies at once.
     if cancellation_rules is not None:
     self.system_policy.updateCancellationRules(cancellation_rules)
-    self.notifier.notify_observers("Cancellation policy updated.") #notifies observers of a change in cancellation rules
+    self.notifier.notifyObservers("Cancellation policy updated.") #notifies observers of a change in cancellation rules
 
     if pricing_strategy is not None:
             self.system_policy.updatePricingStrategy(pricing_strategy)
-            self.notifier.notify_observers("Pricing strategy updated.")
+            self.notifier.notifyObservers("Pricing strategy updated.")
       
     if refund_policy is not None:
             self.system_policy.updateRefundPolicy(refund_policy)
-            self.notifier.notify_observers("Refund policy updated.")
+            self.notifier.notifyObservers("Refund policy updated.")
 
     
