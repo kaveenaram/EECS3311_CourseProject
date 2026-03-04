@@ -12,6 +12,6 @@ class NotificationService(Subject):
   def detach(self, observer: Observer):
     self.observers.remove(observer) #removes observer from the list
 
-  def notifyObservers(self, message: str):
+  def notify_observers(self, message: str):
       for obs in self.observers:
         obs.update(message)
