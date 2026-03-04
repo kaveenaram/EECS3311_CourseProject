@@ -18,7 +18,6 @@ class RequestedState(BookingState):
     
     def reject(self, booking):
         booking._set_state(RejectedState())
-        booking.notifyObservers("Booking has been rejected.")
         return booking
     
     def cancel(self, booking):
