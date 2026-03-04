@@ -52,7 +52,7 @@ class CreditCard(PaymentMethod):
 
         transactionID = str(uuid.uuid4())
 
-        return PaymentResult(transactionID,True,amount)
+        return PaymentResult(transactionID,True,amount,datetime.now())
         
 
 

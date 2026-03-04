@@ -1,10 +1,10 @@
 from datetime import datetime
 
 class PaymentResult:
-  def __init__(self,transactionID:str, success:bool, amount:float ):
+  def __init__(self,transactionID:str, success:bool, amount:float, timestamp: datetime):
     self.transactionID = transactionID
     self.success = success
-    self.timestamp = datetime.now()
+    self.timestamp = timestamp
     self.amount = amount
 
   def __str__(self):
