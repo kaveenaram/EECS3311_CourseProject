@@ -1,3 +1,6 @@
+from .observer import Observer
+from .subject import Subject
+
 class NotificationService(Subject):
 
   def __init__(self):
