@@ -12,6 +12,6 @@ class PaymentResult:
       f"Transaction ID: {self.transactionID} \n"
       f"Success: {self.success} \n"
       f"Timestamp: {self.timestamp} \n"
-      f"Base Price: {self.amount}")
+      f"Amount: {self.amount}")
 
     
