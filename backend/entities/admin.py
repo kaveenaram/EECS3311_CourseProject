@@ -23,7 +23,8 @@ class Admin:
     if pricing_strategy is not None:
             self.system_policy.updatePricingStrategy(pricing_strategy)
             self.notifier.notify_observers("Pricing strategy updated.")
-  if refund_policy is not None:
+      
+    if refund_policy is not None:
             self.system_policy.updateRefundPolicy(refund_policy)
             self.notifier.notify_observers("Refund policy updated.")
 
