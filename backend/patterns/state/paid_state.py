@@ -7,6 +7,7 @@ class PaidState(BookingState):
         if hasattr(booking, 'timeslot') and booking.timeslot is not None:
             try:
                 booking.timeslot.mark_unavailable()
+                booking.notifyObservers("Payment received. Booking is now paid and timeslot is reserved for client.")
             except Exception:
                 pass
         return booking
@@ -20,7 +21,6 @@ class PaidState(BookingState):
     def cancel(self, booking):
         # booking can be cancelled
         # admin refund polices take place
-        # !!!!!!! await admin_service completion !!!!!!!
-
+        booking.notifyObservers("Refund will be issued.")
         booking._set_state(CancelledState())
         return booking
