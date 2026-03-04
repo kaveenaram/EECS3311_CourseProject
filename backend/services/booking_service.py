@@ -1,14 +1,20 @@
-from models.booking import Booking
-from models.timeslot import TimeSlot
+from entities.booking import Booking
+from entities.timeslot import TimeSlot
+from entities.client import Client
+from entities.consultant import Consultant
+from entities.service import Service
 
 
 class BookingService:
 
-    def create_booking(self, booking_id, client, consultant, service, slot: TimeSlot):
+    def __init__(self):
+        self.bookings = []
+
+    def create_booking(self, booking_id: str, client: Client, consultant: Consultant, service: Service, slot: TimeSlot) -> Booking:
 
         # Slot availability
         if not slot.available:
-            raise Exception("Selected timeslot is not available.")
+            raise Exception("Timeslot is not available.")
 
         # Ensure slot belongs to consultant
         if slot not in consultant.timeslots:
@@ -22,6 +28,8 @@ class BookingService:
             service,
             slot
         )
+        self.bookings.append(booking)
+        client.bookings.append(booking)
         return booking
 
   
@@ -30,3 +38,12 @@ class BookingService:
 
         # Remove slot after confirm
         booking.timeslot.mark_unavailable()
+
+    
+
+    def reject_booking(self, booking: Booking):
+        booking.reject()
+    def cancel_booking(self, booking: Booking):
+        booking.cancel()
+    def complete_booking(self, booking: Booking):
+        booking.complete()
