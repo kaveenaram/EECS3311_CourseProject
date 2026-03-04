@@ -10,7 +10,7 @@ class Client(User):
 
         self.payment_methods : List[PaymentMethod] = []
         
-        self.bookings: List[Booking] = []  #please feel free to change this as needed 
+        self.bookings: List[Booking] = []
 
 
     def add_payment_method(self, method: PaymentMethod ) -> None:
@@ -19,6 +19,9 @@ class Client(User):
     def remove_payment_method(self, method : PaymentMethod) -> None:
         if method in self.payment_methods:
             self.payment_methods.remove(method)
+
+    def get_bookings(self) -> List[Booking]:
+        return self.bookings
 
     def get_payment_history(self):
         pass
