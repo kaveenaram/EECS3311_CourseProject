@@ -6,7 +6,7 @@ class PaymentService:
 
     def __init__(self):
         #initialising a list to store all the payments processed by the system 
-        self.payment_history = List[PaymentResult] = []
+        self.payment_history: List[PaymentResult] = []
 
     def process_payment(self,booking,payment_method,amount:float) ->PaymentResult:
         #process payment using the selected payment method 
