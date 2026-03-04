@@ -1,6 +1,6 @@
 from .system_policy import SystemPolicy
-from .patterns.observer.notification_service import NotificationService
-from .consultant.py import Consultant
+from patterns.observer.notification_service import NotificationService
+from .consultant import Consultant
 
 class Admin:
 
