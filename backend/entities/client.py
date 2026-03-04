@@ -5,8 +5,8 @@ from entities.booking import Booking
 
 class Client(User):
 
-    def __init__(self,user_id:str, name:str,email:str):
-        super().__init__(user_id,name,email)
+    def __init__(self,user_id:str, name:str,email:str,password:str):
+        super().__init__(user_id,name,email,password)
 
         self.payment_methods : List[PaymentMethod] = []
         
@@ -27,7 +27,7 @@ class Client(User):
         return self.payment_methods
     
     def logIn(self, password: str) -> bool:
-        if password:
+        if password == self.password:
             print(f"Welcome {self.name}")
             return True
         else:
