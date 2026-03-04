@@ -12,7 +12,7 @@ class PaidState(BookingState):
     def cancel(self, booking):
         # booking can be cancelled
         # admin refund polices take place
-        # !!!!!!! pull from git and check how to implement refund policies !!!!!!!
+        # !!!!!!! await admin_service completion !!!!!!!
 
         booking._set_state(CancelledState())
         return booking

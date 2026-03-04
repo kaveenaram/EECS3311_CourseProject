@@ -5,15 +5,16 @@ from backend.patterns.state.pending_payment_state import PendingPaymentState
 from backend.patterns.state.requested_state import RequestedState
 from backend.patterns.observer.subject import Subject
 
-class Booking:
+class Booking(Subject):
 
-    def __init__(self, booking_id: str, client_id: str, consultant_id: str, service_id: str, slot_id: str, state: str):
+    def __init__(self, booking_id: str, client, consultant, service, timeslot, state: str = None):
       self.booking_id = booking_id
-      self.client_id = client_id
-      self.consultant_id = consultant_id
-      self.service_id = service_id
-      self.slot_id = slot_id
+      self.client = client
+      self.consultant = consultant
+      self.service = service
+      self.timeslot = timeslot
       
+      self._observers: List[Any] = []
       self._state: BookingState = RequestedState()
 
       if hasattr(self._state, "enter"):
@@ -21,8 +22,6 @@ class Booking:
            self._state.enter(self)
         except Exception:
             pass
-
-    # observer helpers are inherited from Subject
 
     # states called by state objects
 
@@ -40,8 +39,8 @@ class Booking:
        return self._state.reject(self)
     def pending_payment(self):
        return self._state.pending_payment(self)
-    def paid(self):
-       return self._state.paid(self)
+    def paid(self, amount: float):
+       return self._state.paid(self, amount)
     def cancel(self):
        return self._state.cancel(self)
     def complete(self):
