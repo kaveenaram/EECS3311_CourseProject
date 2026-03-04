@@ -13,7 +13,7 @@ class PaymentService:
         result = payment_method.process(amount)   
 
         if result.success:
-            booking.mark_as_paid()
+            booking.paid(amount)
             self.payment_history.append(result)
 
         return result
