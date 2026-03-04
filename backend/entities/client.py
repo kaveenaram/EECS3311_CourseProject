@@ -26,11 +26,11 @@ class Client(User):
     def get_payment_methods(self) -> List[PaymentMethod]:
         return self.payment_methods
     
-    def login(self, password: str) -> bool:
+    def logIn(self, password: str) -> bool:
         print(f"Welcome {self.name}")
         return True
 
-    def logout(self) -> None:
+    def logOut(self) -> None:
         print(f"{self.name} logged out")
 
 
