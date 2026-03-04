@@ -27,8 +27,12 @@ class Client(User):
         return self.payment_methods
     
     def logIn(self, password: str) -> bool:
-        print(f"Welcome {self.name}")
-        return True
+        if password:
+            print(f"Welcome {self.name}")
+            return True
+        else:
+            print(f"password incorrect.Please try again...")
+            return False
 
     def logOut(self) -> None:
         print(f"{self.name} logged out")
