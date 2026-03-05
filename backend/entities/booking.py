@@ -1,3 +1,4 @@
+import uuid 
 from ..patterns.observer import observer
 from typing import List, Any
 from ..patterns.state.booking_state import BookingState
@@ -8,7 +9,7 @@ from ..patterns.observer.subject import Subject
 class Booking(Subject):
 
     def __init__(self, booking_id: str, client, consultant, service, timeslot, state: str = None):
-      self.booking_id = booking_id
+      self.booking_id = str(uuid.uuid4()) #auto generate booking id 
       self.client = client
       self.consultant = consultant
       self.service = service

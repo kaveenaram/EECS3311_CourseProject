@@ -10,7 +10,7 @@ class BookingService:
     def __init__(self):
         self.bookings = []
 
-    def create_booking(self, booking_id: str, client: Client, consultant: Consultant, service: Service, slot: TimeSlot) -> Booking:
+    def create_booking(self, client: Client, consultant: Consultant, service: Service, slot: TimeSlot) -> Booking:
 
         # Slot availability
         if not slot.available:
@@ -22,7 +22,6 @@ class BookingService:
 
         # Create booking
         booking = Booking(
-            booking_id,
             client,
             consultant,
             service,
