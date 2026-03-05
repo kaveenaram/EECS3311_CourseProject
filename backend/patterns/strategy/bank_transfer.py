@@ -29,9 +29,7 @@ class BankTransfer(PaymentMethod):
         
         time.sleep(3) #simulating processing delay 
 
-        transactionID = str(uuid.uuid4())
-
-        return PaymentResult(transactionID,True,amount,datetime.now())
+        return PaymentResult(True,amount,datetime.now())
         
 
 
