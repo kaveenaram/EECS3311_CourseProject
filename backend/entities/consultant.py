@@ -5,11 +5,11 @@ from .timeslot import TimeSlot
 
 class Consultant(User):
 
-  def __init__(self, user_id: str, name: str, email: str):
-      super().__init__(user_id, name, email)
-      self.services: List[Service] = []
-      self.timeslots: List[TimeSlot] = []
-      self.approved: bool = False
+  def __init__(self, user_id: str, name: str, email: str, password: str):
+        super().__init__(user_id, name, email, password)
+        self.services: List[Service] = []
+        self.timeslots: List[TimeSlot] = []
+        self.approved: bool = False
 
   def logIn(self, password: str) -> bool:
         # if a consultant is not approved by an admin yet, they cannot log in
