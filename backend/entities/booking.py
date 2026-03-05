@@ -8,7 +8,7 @@ from ..patterns.observer.subject import Subject
 
 class Booking(Subject):
 
-    def __init__(self, booking_id: str, client, consultant, service, timeslot, state: str = None):
+    def __init__(self, client, consultant, service, timeslot, state: str = None):
       self.booking_id = str(uuid.uuid4()) #auto generate booking id 
       self.client = client
       self.consultant = consultant

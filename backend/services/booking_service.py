@@ -46,3 +46,8 @@ class BookingService:
         booking.cancel()
     def complete_booking(self, booking: Booking):
         booking.complete()
+
+    def get_booking(self, booking_id: str) -> Booking:
+        for booking in self.bookings:
+            if booking.
+
