@@ -1,5 +1,4 @@
 import time
-import uuid
 from datetime import datetime
 from .payment_method import PaymentMethod
 from entities.payment_result import PaymentResult
