@@ -48,6 +48,8 @@ class BookingService:
         booking.complete()
 
     def get_booking(self, booking_id: str) -> Booking:
-        for booking in self.bookings:
-            if booking.
+        for book in self.bookings:
+            if book.booking_id == booking_id:
+                return book
+        raise Exception("Booking does not exist")
 
