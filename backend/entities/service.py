@@ -1,6 +1,8 @@
+from consultant import Consultant 
+
 class Service:
 
-  def __init__(self, service_id: str, title: str, duration: int, price: float, consultant):
+  def __init__(self, service_id: str, title: str, duration: int, price: float, consultant : Consultant):
       self.service_id = service_id
       self.title = title
       self.duration = duration
