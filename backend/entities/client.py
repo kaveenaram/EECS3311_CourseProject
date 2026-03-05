@@ -1,6 +1,7 @@
 from typing import List
 from .user import User
 from patterns.strategy.payment_method import PaymentMethod
+from entities.payment_result import PaymentResult
 from entities.booking import Booking
 
 class Client(User):
@@ -23,8 +24,11 @@ class Client(User):
     def get_bookings(self) -> List[Booking]:
         return self.bookings
 
-    def get_payment_history(self):
-        pass
+    def get_payment_history(self) -> List[PaymentResult]:
+        history = []
+        for booking in self.bookings:
+            history.extend(booking.payment_history)
+        return history
 
     def get_payment_methods(self) -> List[PaymentMethod]:
         return self.payment_methods
