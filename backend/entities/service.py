@@ -4,7 +4,7 @@ class Service:
 
   def __init__(self, service_id: str, title: str, duration: int, price: float, consultant : Consultant):
       self.service_id = service_id
-      self.title = title
+      self.service_name = service_name
       self.duration = duration
       self.price = price
       self.consultant = consultant
