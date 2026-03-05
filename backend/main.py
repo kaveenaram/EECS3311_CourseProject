@@ -25,8 +25,8 @@ def main():
     choice = input("Select Option: ")
 
     if choice == "1":
-       services = available_services.show() #To be changes after the available_service.py file is done 
-    
+       available_services.show() #To be changes after the available_service.py file is done 
+       
     elif choice == "2":
         userid = input("Enter userId: ")
         name = input("Enter name: ")
@@ -47,16 +47,35 @@ def main():
         else:
             booking_service.reject_booking(book)
 
-    elif choice == 3:
+    elif choice == "3":
         print("If you haven't made a booking yet, please go back and make a booking\n")
 
         booking_id = input("Enter Booking Id: ")
+        payment_method = ("Enter payment Method: ") #in phase 2 this will ask for the correct choice like credit or debit etc and will direct it to enter the correct details needed to actually create the PaymentMethod Object 
+        amount = float(input("Enter amount"))
+
+        booking = booking_service.get_booking(booking_id)
         
-
-
-
-        #payment_service.process_payment(booking,pabooking,payment_method,amount)
+        if booking:
+            result = payment_service.process_payment(booking,payment_method,amount)
+        else:
+            raise Exception("booking id entered is invalid")
         
+        if result is not None:
+            print("Payment Processed Successfully")
+        else:
+            print("Something went Wrong, please try again")
+
+    elif choice == "4":
+        print("Goodbye")
+
+    else:
+        print("Invalid Choice")
+
+if __name__ == "__main__":
+    main()
+
+
         
 
 

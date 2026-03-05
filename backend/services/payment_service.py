@@ -11,6 +11,11 @@ class PaymentService:
         self.payment_history: List[PaymentResult] = []
 
     def process_payment(self,booking :Booking ,payment_method: PaymentMethod,amount:float) ->PaymentResult | None:
+        #validate the payment method
+        if not payment_method.validate():
+            print("Invalid Payment Details")
+            return None 
+
         #process payment using the selected payment method 
         result = payment_method.process(amount)   
 
