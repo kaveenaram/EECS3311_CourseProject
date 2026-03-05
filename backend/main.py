@@ -1,4 +1,4 @@
-from services.availability_service import AvailableServices 
+from services.availability_service import AvailabilityService 
 from services.booking_service import BookingService
 from services.payment_service import PaymentService
 from entities.client import Client
@@ -6,12 +6,10 @@ from entities.service import Service
 from entities.timeslot import TimeSlot
 
 def main():
-    available_services = AvailableServices()
+    available_services = AvailabilityService()
     booking_service = BookingService()
     payment_service = PaymentService()
     
-    service = Service() # to be changed and add to choice 2 section after available_service.py file is done 
-    slot = TimeSlot() # to be changed and add to choice 2 section after available_service.py file is done 
 
     print("=====================================")
     print("Welcome to Consulting Booking System\n")
@@ -25,18 +23,25 @@ def main():
     choice = input("Select Option: ")
 
     if choice == "1":
-       available_services.show() #To be changes after the available_service.py file is done 
+       services = available_services.browse_services()
+       print(services)
        
     elif choice == "2":
         userid = input("Enter userId: ")
         name = input("Enter name: ")
         email = input("Enter email: ")
+        service_choice = input("Enter Service: ") #in phase 2 this will be changed to actually create the service object, for now it assume this does that 
+        slot = input("Enter TimeSlot: ") #in phase 2 this will be changed to actually create the timeslot object, for now it assume this does that 
 
+        services = available_services.browse_services() 
+        if service_choice in services:
+            consultant = service_choice.consultant #consultant that provide that service 
+        else:
+            raise Exception("Invalid Service")
         
-        consultant = service.consultant #consultant that provide that service 
 
         client = Client(userid,name,email)
-        book = booking_service.create_booking(client,consultant,service,slot)
+        book = booking_service.create_booking(client,consultant,service_choice,slot)
 
 
         #consultant accepting or rejecting 
