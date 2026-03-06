@@ -38,7 +38,7 @@ class Client(User):
             print(f"Welcome {self.name}")
             return True
         else:
-            print(f"password incorrect.Please try again...")
+            print(f"password incorrect. Please try again...")
             return False
 
     def logOut(self) -> None:
