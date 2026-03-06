@@ -192,6 +192,11 @@ def consultant_menu(user_id):
     print("6. Log Out")
 
     while True:
+
+        # consultant will be given test booking for example purposes, to show how the consultant can accept/reject and complete the booking, and also to show how payment works after accepting the booking. 
+        if (consultant.timeslots and consultant.services):
+            test_booking = booking_service.create_booking(users["client1"], consultant, available_services.services[0], consultant.timeslots[0])
+        
         choice = input("\nSelect Option: \n")
 
         if choice == "1":
@@ -200,7 +205,7 @@ def consultant_menu(user_id):
                 continue
             else:
                 for b in consultant.bookings:
-                    print(f"Booking ID: {b.booking_id}, Client: {b.client.name}, Service: {b.service.name}, Time: {b.timeslot.start_time} - {b.timeslot.end_time}, State: {b._state}")
+                    print(f"Booking ID: {b.booking_id}, Client: {b.client.name}, Service: {b.service.serviceName}, Time: {b.timeslot.start_time} - {b.timeslot.end_time}, State: {b._state}")
 
                 print("\nEnter Booking ID to accept/reject/complete or press Enter to go back:")
                 booking_id = input("Booking ID: ")

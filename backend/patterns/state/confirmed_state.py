@@ -13,3 +13,4 @@ class ConfirmedState(BookingState):
     def cancel(self, booking):
         booking._set_state(CancelledState())
         return booking
+
