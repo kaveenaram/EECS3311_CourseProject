@@ -46,7 +46,7 @@ def main():
             #finding the service object 
             selected_service = None 
             for s in services:
-                if s.name == service_choice:
+                if s.serviceName == service_choice:
                     selected_service =s
                     break
 
