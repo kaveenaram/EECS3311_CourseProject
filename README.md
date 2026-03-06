@@ -32,25 +32,26 @@ https://github.com/kaveenaram/EECS3311_CourseProject
 
 ### Kaveena — Booking Lifecycle (State Pattern Owner), UML Case Diagram, README.md
  Use Cases Covered:
-•    UC2 Request Booking
-•    UC3 Cancel Booking
-•    UC9 Accept/Reject Booking
-•    UC10 Complete Booking
+ - UC2 Request Booking
+ - UC3 Cancel Booking
+ - UC9 Accept/Reject Booking
+ - UC10 Complete Booking
 
 ### Dulja — Payment System (Strategy Pattern Owner), UML Case Diagram, UML Class Diagram, main.py
 Use Cases Covered:
-•    UC5 Process Payment
-•    UC6 Manage Payment Methods
-•    UC7 View Payment History
+- UC5 Process Payment
+- UC6 Manage Payment Methods
+- UC7 View Payment History
 
 ### Terry — Availability & Core Entities
 Use Cases Covered:
-•    UC1 Browse Services
-•    UC8 Manage Availability
-    •    Validating slot availability before booking
-    •    Removing slot after confirmation
+- UC1 Browse Services
+- UC4 View Booking History
+- UC8 Manage Availability
+  - Validating slot availability before booking
+  - Removing slot after confirmation
     
 ### Meleena — Admin + Policies + Notifications, UML Case Diagram
 Use Cases Covered:
-•    UC11 Approve Consultant
-•    UC12 Define Policies
+- UC11 Approve Consultant
+- UC12 Define Policies
