@@ -5,9 +5,9 @@ from entities.client import Client
 from entities.service import Service
 from entities.timeslot import TimeSlot
 
-from patterns.strategy.credit_card import CreditCardPayment
-from patterns.strategy.debit_card import DebitCardPayment
-from patterns.strategy.paypal import PayPalPayment
+from patterns.strategy.credit_card import CreditCard
+from patterns.strategy.debit_card import DebitCard
+from patterns.strategy.paypal import Paypal
 from patterns.strategy.bank_transfer import BankTransfer
 
 def main():
@@ -90,11 +90,11 @@ def main():
         
         #create correct payment strategy 
         if payment_choice == "1":
-            payment_method = CreditCardPayment()
+            payment_method = CreditCard()
         elif payment_choice == "2":
-            payment_method = DebitCardPayment()
+            payment_method = DebitCard()
         elif payment_choice == "3":
-            payment_method = PayPalPayment()
+            payment_method = Paypal()
         elif payment_choice == "4":
             payment_method = BankTransfer()
         else:
