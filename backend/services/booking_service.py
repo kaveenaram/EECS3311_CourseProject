@@ -6,7 +6,6 @@ from entities.service import Service
 
 
 class BookingService:
-
     def __init__(self):
         self.bookings = []
 
