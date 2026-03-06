@@ -1,6 +1,10 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from entities.booking import Booking
+
 from abc import ABC
 from typing import Any
-from entities.booking import Booking
 
 class BookingState(ABC):
     # initial state when a client submits a booking request is the requested state

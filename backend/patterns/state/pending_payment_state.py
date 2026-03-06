@@ -1,3 +1,8 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from entities.booking import Booking
+
 from .booking_state import BookingState
 from .paid_state import PaidState
 from .cancelled_state import CancelledState

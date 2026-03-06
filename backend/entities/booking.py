@@ -1,14 +1,13 @@
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from patterns.state.booking_state import BookingState  # only for type hints
+from typing import TYPE_CHECKING, List, Any
 
 import uuid 
 from patterns.observer import observer
-from typing import List, Any
 from patterns.state.pending_payment_state import PendingPaymentState
 from patterns.state.requested_state import RequestedState
 from patterns.observer.subject import Subject
+
+if TYPE_CHECKING:
+    from patterns.state.booking_state import BookingState  # only for type hints
 
 class Booking(Subject):
 
@@ -20,7 +19,7 @@ class Booking(Subject):
       self.timeslot = timeslot
       
       self._observers: List[Any] = []
-      self._state: BookingState = RequestedState()
+      self._state: "BookingState" = RequestedState()
 
       if hasattr(self._state, "enter"):
         try:
