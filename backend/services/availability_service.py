@@ -9,6 +9,7 @@ class AvailabilityService:
     def __init__(self):
         # list all services
         self.services: List[Service] = []
+        
 
   
     def add_service(self, service: Service):
