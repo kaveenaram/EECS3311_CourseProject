@@ -1,8 +1,8 @@
 from typing import List
 from .user import User
-from patterns.strategy.payment_method import PaymentMethod
-from entities.payment_result import PaymentResult
-from entities.booking import Booking
+from backend.patterns.strategy.payment_method import PaymentMethod
+from ..entities.payment_result import PaymentResult
+from ..entities.booking import Booking
 
 class Client(User):
 
