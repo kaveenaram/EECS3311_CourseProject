@@ -199,7 +199,7 @@ def consultant_menu(user_id):
                 for b in consultant.bookings:
                     print(f"Booking ID: {b.booking_id}, Client: {b.client.name}, Service: {b.service.name}, Time: {b.timeslot.start_time} - {b.timeslot.end_time}, State: {b._state}")
 
-                print("\nEnter Booking ID to accept/reject or press Enter to go back:")
+                print("\nEnter Booking ID to accept/reject/complete or press Enter to go back:")
                 booking_id = input("Booking ID: ")
                 if booking_id:
                     booking = booking_service.get_booking(booking_id)
@@ -210,6 +210,7 @@ def consultant_menu(user_id):
 
                     print("1. Accept Booking")
                     print("2. Reject Booking")
+                    print("3. Complete Booking")
                     action_choice = input("Select Option: ")
 
                     if action_choice == "1":
@@ -218,6 +219,11 @@ def consultant_menu(user_id):
                     elif action_choice == "2":
                         booking_service.reject_booking(booking)
                         print("Booking Rejected")
+                    elif action_choice == "3":
+                        if booking_service.complete_booking(booking):
+                            print("Booking Completed")
+                        else:
+                            print("Booking cannot be completed. Please ensure the booking has been paid.")
                     else:
                         print("Invalid Choice")
                 else:
