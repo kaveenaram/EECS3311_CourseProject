@@ -11,12 +11,11 @@ class AvailabilityService:
         self._load_default_services()
         
 
-  
     def add_service(self, service: Service):
         self.services.append(service)
 
     def browse_services(self) -> List[Service]:
-        return self.services\
+        return self.services
         
     def _load_default_services(self):
         consultant = Consultant("c1", "Alice", "alice@mail.com", "pass")
@@ -31,7 +30,7 @@ class AvailabilityService:
         TimeSlot("ts2", "10:30", "11:30"),
         TimeSlot("ts3", "13:00", "14:00"),
         TimeSlot("ts4", "15:00", "16:00")
-    ]
+        ]
         
         #adding them to consult 
         for slot in default_slots:

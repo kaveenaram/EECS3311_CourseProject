@@ -28,6 +28,8 @@ class BookingService:
         )
         self.bookings.append(booking)
         client.bookings.append(booking)
+        consultant.bookings.append(booking)
+        
         return booking
 
   
