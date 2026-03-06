@@ -3,7 +3,14 @@ from .system_policy import SystemPolicy
 from patterns.observer.notification_service import NotificationService
 from .consultant import Consultant
 
+"""
+Admin Class: Platform administrator who oversees consultants and system policies
+"""
+
 class Admin(User):
+
+    # Admin constructor takes in system policy and notification service for managing policies and sending notifications
+    # Uses User constructor for basic user attributes
 
     def __init__(self, user_id: str, name: str, email: str, password: str,
                  system_policy: SystemPolicy, notifier: NotificationService):
@@ -11,6 +18,8 @@ class Admin(User):
         self.system_policy = system_policy
         self.notifier = notifier
 
+    # Admin login/logout methods with simple password check and console messages
+    # Overrides user login/logout to provide admin-specific messages and functionality
     def logIn(self, password: str) -> bool:
         if password == self.password:
             print(f"Admin {self.name} logged in.")
@@ -20,6 +29,8 @@ class Admin(User):
 
     def logOut(self) -> None:
         print(f"Admin {self.name} logged out.")
+
+    # Admin-specific methods for approving consultants and updating system policies
 
     def approveConsultant(self, consultant: Consultant):
         consultant.approved = True
@@ -42,3 +53,6 @@ class Admin(User):
         if refund_policy is not None:
             self.system_policy.updateRefundPolicy(refund_policy)
             self.notifier.notifyObservers("Refund policy updated.")
+
+    def __str__(self):
+        return f"Admin {self.name} | Email: {self.email}"

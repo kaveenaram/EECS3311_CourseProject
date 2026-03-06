@@ -6,6 +6,11 @@ if TYPE_CHECKING:
 from abc import ABC
 from typing import Any
 
+"""
+BookingState Class: Abstract base class representing the state of a booking in the system.
+Concrete implementations will define specific behaviors for each booking state.
+"""
+
 class BookingState(ABC):
     # initial state when a client submits a booking request is the requested state
     # interface for booking states

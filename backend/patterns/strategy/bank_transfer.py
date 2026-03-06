@@ -3,6 +3,9 @@ from datetime import datetime
 from .payment_method import PaymentMethod
 from entities.payment_result import PaymentResult
 
+"""
+BankTransfer Class: Implements the PaymentMethod interface for processing bank transfers.
+"""
 
 class BankTransfer(PaymentMethod):
     

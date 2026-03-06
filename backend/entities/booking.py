@@ -9,8 +9,14 @@ from patterns.observer.subject import Subject
 if TYPE_CHECKING:
    from patterns.state.booking_state import BookingState  # only for type hints
 
+"""
+Booking Class: Represents a booking made by a client for a consulting session with a consultant, including details like client, consultant, service, timeslot, and booking state.
+Implements the Subject interface for the Observer pattern to notify observers (like clients and consultants) of state changes, and uses the State pattern to manage booking states and transitions.
+"""
+
 class Booking(Subject):
 
+   # Booking constructor initializes booking attributes including client, consultant, service, timeslot, and sets the initial state to RequestedState. It also initializes an empty list of observers for the Observer pattern.
    def __init__(self, client, consultant, service, timeslot, state: str = None):
       self.booking_id = str(uuid.uuid4()) #auto generate booking id 
       self.client = client
@@ -26,6 +32,9 @@ class Booking(Subject):
             self._state.enter(self)
          except Exception:
             pass
+
+   # Observer pattern methods to attach observers and notify them of state changes.
+   # Observers have an update() method that will be called with a message when the booking state changes.
         
    def attachObserver(self, observer):
       self._observers.append(observer)

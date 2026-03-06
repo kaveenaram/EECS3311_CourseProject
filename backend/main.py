@@ -20,11 +20,11 @@ main.py uses terminal commands to demonstrate:
 • Consultant accepting/rejecting bookings
 • Processing payment (simulation)
 
-"""
+in phase 2, this will be replaced by a proper database	
+for now, this is for demonstration purposes only
+there exists default consultant in availability_service.py for the example
 
-# in phase 2, this will be replaced by a proper database	
-# for now, this is for demonstration purposes only
-# there exists default consultant in availability_service.py for the example
+"""
 
 users = {
     "client1": Client("client1", "client", "client@domain.com", "password"),

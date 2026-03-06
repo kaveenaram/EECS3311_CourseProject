@@ -3,7 +3,11 @@ from entities.payment_result import PaymentResult
 from entities.booking import Booking
 from patterns.strategy.payment_method import PaymentMethod
 
-#this class process payments, update booking state,stores history and provide access to the history 
+"""
+PaymentService Class: Manages the processing of payments for bookings, including validating payment methods, updating booking states, and maintaining a history of payments.
+Provides a method to process payments for a given booking using a specified payment method and amount, and a method to retrieve the payment history.
+"""
+
 class PaymentService:
 
     def __init__(self):

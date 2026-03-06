@@ -3,6 +3,10 @@ from entities.service import Service
 from entities.timeslot import TimeSlot
 from entities.consultant import Consultant
 
+"""
+AvailabilityService Class: Manages the availability of services and timeslots for consultants.
+Provides methods to add services, manage timeslots, and validate slot availability for bookings.
+"""
 
 class AvailabilityService:
     def __init__(self):
@@ -17,6 +21,7 @@ class AvailabilityService:
     def browse_services(self) -> List[Service]:
         return self.services
         
+    # default services and timeslots for testing/demo purposes, can be removed in production
     def _load_default_services(self):
         consultant = Consultant("c1", "Alice", "alice@mail.com", "pass")
 
@@ -36,8 +41,8 @@ class AvailabilityService:
         for slot in default_slots:
             consultant.add_timeslot(slot)
 
+    # Methods to manage timeslots for consultants, including adding, removing, browsing available slots, validating slot availability, and marking slots as unavailable when booked.
 
-  
     def add_timeslot(self, consultant: Consultant, timeslot: TimeSlot):
         consultant.add_timeslot(timeslot)
 
@@ -48,8 +53,6 @@ class AvailabilityService:
     def get_available_slots(self, consultant: Consultant) -> List[TimeSlot]:
         return [slot for slot in consultant.timeslots if slot.available]
 
-
-
     def validate_slot(self, consultant: Consultant, timeslot: TimeSlot) -> bool:
         # Ensures a slot:
         if timeslot not in consultant.timeslots:
@@ -59,7 +62,6 @@ class AvailabilityService:
             raise Exception("Timeslot is already booked")
 
         return True
-
 
     def mark_slot_unavailable(self, timeslot: TimeSlot):
         timeslot.mark_unavailable()

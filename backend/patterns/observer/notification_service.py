@@ -1,6 +1,10 @@
 from .observer import Observer
 from .subject import Subject
 
+"""
+NotificationService Class: Implements the Subject interface for the Observer pattern to manage and notify observers of state changes.
+"""
+
 class NotificationService(Subject):
 
   def __init__(self):

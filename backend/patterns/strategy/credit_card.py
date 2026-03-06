@@ -3,6 +3,10 @@ from datetime import datetime
 from .payment_method import PaymentMethod
 from entities.payment_result import PaymentResult
 
+"""
+CreditCard Class: Implements the PaymentMethod interface for processing credit card payments.
+"""
+
 class CreditCard(PaymentMethod):
     
     def __init__(self,card_number: str, expiry : str, cvv:str ):

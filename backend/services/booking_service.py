@@ -4,7 +4,10 @@ from entities.client import Client
 from entities.consultant import Consultant
 from entities.service import Service
 
-
+"""
+BookingService Class: Handles the core logic for managing bookings, including creating, confirming, rejecting, cancelling, and completing bookings.
+Provides methods to create a booking by validating slot availability and associating it with the client and consultant, as well as methods to update the booking status and retrieve bookings by ID.
+"""
 class BookingService:
     def __init__(self):
         self.bookings = []
