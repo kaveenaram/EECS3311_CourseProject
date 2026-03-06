@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 
 class PaymentResult:
-  def __init__(self,transactionID:str, success:bool, amount:float, timestamp: datetime):
+  def __init__(self, success:bool, amount:float, timestamp: datetime):
     self.transactionID = str(uuid.uuid4()) # to Auto generate Transaction ID
     self.success = success
     self.timestamp = timestamp

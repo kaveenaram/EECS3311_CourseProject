@@ -106,7 +106,7 @@ def main():
             print("4. Bank transfer")
 
             payment_choice = input("Enter payment Method: ") #in phase 2 this will ask for the correct choice like credit or debit etc and will direct it to enter the correct details needed to actually create the PaymentMethod Object 
-            amount = float(input("Enter amount"))
+            amount = float(input("Enter amount: "))
 
             booking = booking_service.get_booking(booking_id)
 
@@ -115,13 +115,22 @@ def main():
 
             #create correct payment strategy 
             if payment_choice == "1":
-                payment_method = CreditCard()
+                card_number = input("Enter credit card number: ")
+                expiry = input("Enter expiry date (MM/YY): ")
+                cvv = input("Enter CVV: ")
+                payment_method = CreditCard(card_number, expiry, cvv)
             elif payment_choice == "2":
-                payment_method = DebitCard()
+                card_number = input("Enter credit card number: ")
+                expiry = input("Enter expiry date (MM/YY): ")
+                cvv = input("Enter CVV: ")
+                payment_method = DebitCard(card_number, expiry, cvv)
             elif payment_choice == "3":
-                payment_method = Paypal()
+                email = input("Enter email: ")
+                payment_method = Paypal(email)
             elif payment_choice == "4":
-                payment_method = BankTransfer()
+                account_no = input("Enter Account No: ")
+                routing_no = input("Enter Routing No: ")
+                payment_method = BankTransfer(account_no, routing_no)
             else:
                 raise Exception("Invalid payment method")
 
