@@ -25,6 +25,18 @@ class AvailabilityService:
         self.services.append(Service("s2", "Resume Review", 30, 60.0, consultant))
         self.services.append(Service("s3", "Interview Prep", 45, 90.0, consultant))
 
+        # default timeslots 
+        default_slots = [
+        TimeSlot("ts1", "09:00", "10:00"),
+        TimeSlot("ts2", "10:30", "11:30"),
+        TimeSlot("ts3", "13:00", "14:00"),
+        TimeSlot("ts4", "15:00", "16:00")
+    ]
+        
+        #adding them to consult 
+        for slot in default_slots:
+            consultant.add_timeslot(slot)
+
 
   
     def add_timeslot(self, consultant: Consultant, timeslot: TimeSlot):

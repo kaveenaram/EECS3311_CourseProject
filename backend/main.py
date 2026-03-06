@@ -37,37 +37,60 @@ def main():
         elif choice == "2":
             userid = input("Enter userId: ")
             name = input("Enter name: ")
-            email = input("Enter email: ")
+            email = input("Enter email: "); 
+            password = input("Enter Password: ") #will do the encrypting of password on phaser 2 
+            
+            #service selection
             service_choice = input("Enter Service: ") #in phase 2 this will be changed to actually create the service object, for now it assume this does that 
-            slot = input("Enter TimeSlot: ") #in phase 2 this will be changed to actually create the timeslot object, for now it assume this does that 
-
+            
             services = available_services.browse_services() 
-
             #finding the service object 
             selected_service = None 
             for s in services:
-                if s.serviceName == service_choice:
-                    selected_service =s
-                    break
-
+             if s.serviceName == service_choice:
+                selected_service =s
+                break
+            
             if selected_service:
                 consultant = selected_service.consultant
             else:
                 raise Exception("Invalid Service")
 
-            client = Client(userid,name,email)
 
-            #time slot object 
-            timeslot = TimeSlot(slot)
 
-            book = booking_service.create_booking(client,consultant,service_choice,slot)
+            #showing user the available timeslots 
+            available_slots = consultant.get_available_timeslots()
+            if not available_slots:
+                print("No available timeslots for this consultant.")
+                continue
+            
+            print("\nAvailable timeslots:")
+            for slot in available_slots:
+                print(f"{slot.slot_id}: {slot.start_time} - {slot.end_time}")
+            
+            
+            slot_id = input("Enter TimeSlot id: ") #in phase 2 this will be changed to actually create the timeslot object, for now it assume this does that 
 
+            timeslot = None
+            for slot in available_slots:
+                if slot.slot_id == slot_id:
+                    timeslot = slot
+                    break
+
+            if not timeslot:
+                print("Invalid timeslot selected.")
+                continue
+
+            #creating the client and booking
+            client = Client(userid,name,email,password)
+            book = booking_service.create_booking(client,consultant,selected_service,timeslot)
 
             #consultant accepting or rejecting 
             available_slot = consultant.get_available_timeslots()
 
             if timeslot in available_slot:
                 booking_service.confirm_booking(book)
+                print(f"Booking confirmed! Booking ID: {book.booking_id}")
             else:
                 booking_service.reject_booking(book)
 
