@@ -1,6 +1,6 @@
 from abc import ABC
 from typing import Any
-from backend.entities.booking import Booking
+from entities.booking import Booking
 
 class BookingState(ABC):
     # initial state when a client submits a booking request is the requested state

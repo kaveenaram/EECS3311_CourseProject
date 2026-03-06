@@ -6,6 +6,12 @@ from patterns.state.pending_payment_state import PendingPaymentState
 from patterns.state.requested_state import RequestedState
 from patterns.observer.subject import Subject
 
+from typing import TYPE_CHECKING
+
+
+if TYPE_CHECKING:
+    from patterns.state.booking_state import BookingState  # only for type hints
+
 class Booking(Subject):
 
     def __init__(self, client, consultant, service, timeslot, state: str = None):
