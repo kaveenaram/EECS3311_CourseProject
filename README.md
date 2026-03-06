@@ -31,6 +31,7 @@ https://github.com/kaveenaram/EECS3311_CourseProject
 - Download or clone the GitHub Repository
 - Using the terminal, direct yourself to the EECS3311_CourseProject directory
 - Run python backend/main.py in the terminal
+- For Phase 1, log in using the provided test users as creating a user is not yet supported
 
 ## Main Contributions
 
