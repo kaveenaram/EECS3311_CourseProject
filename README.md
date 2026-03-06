@@ -27,10 +27,14 @@
 
 ## How To Run
 https://github.com/kaveenaram/EECS3311_CourseProject
+- Please make sure your Python version is up to date before proceeding
+- Download or clone the GitHub Repository
+- Using the terminal, direct yourself to the EECS3311_CourseProject directory
+- Run python backend/main.py in the terminal
 
 ## Main Contributions
 
-### Kaveena Ramkissoon — Booking Lifecycle (State Pattern Owner), UML Case Diagram, README.md
+### Kaveena Ramkissoon — Booking Lifecycle (State Pattern Owner), UML Case Diagram, README.md, main.py
  Use Cases Covered:
  - UC2 Request Booking
  - UC3 Cancel Booking
@@ -48,8 +52,6 @@ Use Cases Covered:
 - UC1 Browse Services
 - UC4 View Booking History
 - UC8 Manage Availability
-  - Validating slot availability before booking
-  - Removing slot after confirmation
     
 ### Meleena Subasinghe — Admin + Policies + Notifications, UML Class Diagram
 Use Cases Covered:

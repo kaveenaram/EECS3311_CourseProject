@@ -46,7 +46,7 @@ def main():
     user_id = input("User ID: ").strip() #ignore white space
     password = input("Password: ").strip() #ignore white space
 
-    if (user_id not in users and not users[user_id].logIn(password)):
+    if (user_id not in users or not users[user_id].logIn(password)):
         print("Invalid credentials. Exiting...")
         return
     # if the logged in user is a client, show the client menu
