@@ -54,7 +54,7 @@ Use Cases Covered:
 - UC4 View Booking History
 - UC8 Manage Availability
     
-### Meleena Subasinghe — Admin + Policies + Notifications, UML Class Diagram
+### Meleena Subasinghe — Admin + Policies + Notifications (Observer Pattern Owner), UML Class Diagram
 Use Cases Covered:
 - UC11 Approve Consultant
 - UC12 Define Policies
