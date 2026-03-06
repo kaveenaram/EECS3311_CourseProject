@@ -46,6 +46,9 @@ def main():
     user_id = input("User ID: ").strip() #ignore white space
     password = input("Password: ").strip() #ignore white space
 
+    consultant1 = users["consultant1"]
+    consultant1.approved = True #for demo purposes, we approve the consultant by default
+
     if (user_id not in users or not users[user_id].logIn(password)):
         print("Invalid credentials. Exiting...")
         return
