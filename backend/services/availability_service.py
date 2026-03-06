@@ -5,7 +5,6 @@ from entities.consultant import Consultant
 
 
 class AvailabilityService:
-
     def __init__(self):
         # list all services
         self.services: List[Service] = []
