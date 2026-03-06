@@ -1,10 +1,10 @@
 import uuid 
-from ..patterns.observer import observer
+from patterns.observer import observer
 from typing import List, Any
-from ..patterns.state.booking_state import BookingState
-from ..patterns.state.pending_payment_state import PendingPaymentState
-from ..patterns.state.requested_state import RequestedState
-from ..patterns.observer.subject import Subject
+from patterns.state.booking_state import BookingState
+from patterns.state.pending_payment_state import PendingPaymentState
+from patterns.state.requested_state import RequestedState
+from patterns.observer.subject import Subject
 
 class Booking(Subject):
 
