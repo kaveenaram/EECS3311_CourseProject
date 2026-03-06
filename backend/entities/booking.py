@@ -1,16 +1,14 @@
-import uuid 
-from patterns.observer import observer
-from typing import List, Any
-from patterns.state.booking_state import BookingState
-from patterns.state.pending_payment_state import PendingPaymentState
-from patterns.state.requested_state import RequestedState
-from patterns.observer.subject import Subject
-
 from typing import TYPE_CHECKING
-
 
 if TYPE_CHECKING:
     from patterns.state.booking_state import BookingState  # only for type hints
+
+import uuid 
+from patterns.observer import observer
+from typing import List, Any
+from patterns.state.pending_payment_state import PendingPaymentState
+from patterns.state.requested_state import RequestedState
+from patterns.observer.subject import Subject
 
 class Booking(Subject):
 
