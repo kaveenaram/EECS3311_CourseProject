@@ -8,6 +8,7 @@ class AvailabilityService:
     def __init__(self):
         # list all services
         self.services: List[Service] = []
+        self._load_default_services()
         
 
   
@@ -15,7 +16,14 @@ class AvailabilityService:
         self.services.append(service)
 
     def browse_services(self) -> List[Service]:
-        return self.services
+        return self.services\
+        
+    def _load_default_services(self):
+        consultant = Consultant("c1", "Alice", "alice@mail.com", "pass")
+
+        self.services.append(Service("s1", "Career Coaching", 60, 120.0, consultant))
+        self.services.append(Service("s2", "Resume Review", 30, 60.0, consultant))
+        self.services.append(Service("s3", "Interview Prep", 45, 90.0, consultant))
 
 
   
