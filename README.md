@@ -1,6 +1,8 @@
 # Team9_Phase1 EECS-3311 Course Project
 
 GitHub Repository URL: https://github.com/kaveenaram/EECS3311_CourseProject
+- I confirm that the repository is public and accessible.
+- I understand that the state of the **main** branch at the time of submission will be considered the official Phase 1 submission.
 
 ## Architecture Overview
 - Layered structure:
