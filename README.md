@@ -1,5 +1,7 @@
 # Team9_Phase1 EECS-3311 Course Project
 
+GitHub Repository URL: https://github.com/kaveenaram/EECS3311_CourseProject
+
 ## Architecture Overview
 - Layered structure:
   - Entities: domain objects and simple behaviors ([`backend/entities/booking.Booking`](backend/entities/booking.py), [`backend/entities/timeslot.TimeSlot`](backend/entities/timeslot.py), [`backend/entities/client.Client`](backend/entities/client.py), [`backend/entities/consultant.Consultant`](backend/entities/consultant.py)).
@@ -26,7 +28,7 @@
   - Used by [`backend/services/payment_service.PaymentService`](backend/services/payment_service.py)
 
 ## How To Run
-https://github.com/kaveenaram/EECS3311_CourseProject
+GitHub Repository URL: https://github.com/kaveenaram/EECS3311_CourseProject
 - Download .zip from github
 - Please make sure your Python version is up to date before proceeding
 - Download or clone the GitHub Repository
