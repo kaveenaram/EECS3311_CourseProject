@@ -27,10 +27,10 @@
 
 ## How To Run
 https://github.com/kaveenaram/EECS3311_CourseProject
+- Download .zip from github
 - Please make sure your Python version is up to date before proceeding
 - Download or clone the GitHub Repository
 - Using the terminal, direct yourself to the EECS3311_CourseProject directory
-  - If it is being run from the .zip file submitted, make sure you are in the Team9_Phase1 directory
 - Run python backend/main.py in the terminal
 - For Phase 1, log in using the provided test users as creating a user is not yet supported
 
