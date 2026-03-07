@@ -28,3 +28,5 @@ class BookingState(ABC):
     def complete(self, booking: "Booking"):
         raise Exception("Invalid state transition: Booking cannot be marked as completed from the current state")
 
+    def __str__(self):
+        return self.__class__.__name__.replace("State", "")

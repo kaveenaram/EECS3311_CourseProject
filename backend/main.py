@@ -1,3 +1,6 @@
+from patterns.state.paid_state import PaidState
+from patterns.state.requested_state import RequestedState
+from patterns.state.booking_state import BookingState
 from services.availability_service import AvailabilityService 
 from services.booking_service import BookingService
 from services.payment_service import PaymentService
@@ -191,12 +194,15 @@ def consultant_menu(user_id):
     print("5. View Availability")
     print("6. Log Out")
 
+    test_booking_created = False #for demo purposes, we create a test booking for the consultant to show how accepting/rejecting and completing works, and also to show how payment works after accepting the booking. This variable ensures that the test booking is only created once.
+    
     while True:
 
         # consultant will be given test booking for example purposes, to show how the consultant can accept/reject and complete the booking, and also to show how payment works after accepting the booking. 
-        if (consultant.timeslots and consultant.services):
+        if not test_booking_created and (consultant.timeslots and consultant.services):
             test_booking = booking_service.create_booking(users["client1"], consultant, available_services.services[0], consultant.timeslots[0])
-        
+            test_booking_created = True
+
         choice = input("\nSelect Option: \n")
 
         if choice == "1":
@@ -208,11 +214,11 @@ def consultant_menu(user_id):
                     print(f"Booking ID: {b.booking_id}, Client: {b.client.name}, Service: {b.service.serviceName}, Time: {b.timeslot.start_time} - {b.timeslot.end_time}, State: {b._state}")
 
                 print("\nEnter Booking ID to accept/reject/complete or press Enter to go back:")
-                booking_id = input("Booking ID: ")
+                booking_id = input("Booking ID: ").strip() #ignore white space
                 if booking_id:
                     booking = booking_service.get_booking(booking_id)
 
-                    if not booking:
+                    if not booking or booking not in consultant.bookings:
                         print("Invalid Booking ID")
                         continue
 
@@ -221,21 +227,32 @@ def consultant_menu(user_id):
                     print("3. Complete Booking")
                     action_choice = input("Select Option: ")
 
+                    state: BookingState = booking.get_state()
+
                     if action_choice == "1":
-                        booking_service.confirm_booking(booking)
-                        print("Booking Accepted")
-                    elif action_choice == "2":
-                        booking_service.reject_booking(booking)
-                        print("Booking Rejected")
-                    elif action_choice == "3":
-                        if booking_service.complete_booking(booking):
-                            print("Booking Completed")
+                        if isinstance(state, RequestedState):
+                            booking_service.confirm_booking(booking)
+                            print("Booking Accepted")
                         else:
-                            print("Booking cannot be completed. Please ensure the booking has been paid.")
+                            print("Booking is not requested and cannot be accepted.")
+                    elif action_choice == "2":
+                        if isinstance(state, RequestedState):
+                            booking_service.reject_booking(booking)
+                            print("Booking Rejected")
+                        else:
+                            print("Booking cannot be rejected.")
+                    elif action_choice == "3":
+                        if isinstance(state, PaidState):
+                            if booking_service.complete_booking(booking):
+                                print("Booking Completed")
+                            else:
+                                print("Booking cannot be completed. Please ensure the booking has been paid.")
+                        else:
+                            print("Only paid bookings can be completed.")
                     else:
                         print("Invalid Choice")
                 else:
-                    print("Invalid Booking ID")
+                    continue 
 
         elif choice == "2":
             print("Add existing service or create new service?")

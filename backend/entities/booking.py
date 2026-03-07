@@ -53,7 +53,10 @@ class Booking(Subject):
             self._state.enter(self)
          except Exception:
             pass
-    
+   
+   def get_state(self):
+      return self._state
+   
    def confirm (self):
       return self._state.confirm(self)
    def reject(self):
