@@ -1,0 +1,10 @@
+/* index.css */
+body {
+  margin: 0;
+  font-family: sans-serif;
+  /* Purple to blue light gradient */
+background: linear-gradient(135deg, #b19cd9, #c8a2f6, #8ec6ff, #66b3ff);
+  background-size: 400% 400%;
+  animation: gradientAnimation 15s ease infinite;
+  min-height: 100vh;
+}
