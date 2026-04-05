@@ -51,7 +51,7 @@ export async function getConsultantBookings(consultantId) {
         service_name: "Career Coaching",
         start_time: "2026-04-05T09:00:00",
         end_time: "2026-04-05T10:00:00",
-        state: "Pending"
+        state: "PENDING"
       },
       {
         booking_id: "b2",
@@ -59,7 +59,7 @@ export async function getConsultantBookings(consultantId) {
         service_name: "Resume Review",
         start_time: "2026-04-05T10:30:00",
         end_time: "2026-04-05T11:00:00",
-        state: "Confirmed"
+        state: "CONFIRMED"
       },
       {
         booking_id: "b3",
@@ -67,7 +67,7 @@ export async function getConsultantBookings(consultantId) {
         service_name: "Interview Prep",
         start_time: "2026-04-05T11:30:00",
         end_time: "2026-04-05T12:00:00",
-        state: "Rejected"
+        state: "REJECTED"
       }
     ];
 
