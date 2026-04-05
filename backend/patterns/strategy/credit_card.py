@@ -1,5 +1,7 @@
 import time
 from datetime import datetime
+from sqlalchemy import ForeignKey, String, Column
+from backend.database.db import Base
 from .payment_method import PaymentMethod
 from entities.payment_result import PaymentResult
 
@@ -7,7 +9,16 @@ from entities.payment_result import PaymentResult
 CreditCard Class: Implements the PaymentMethod interface for processing credit card payments.
 """
 
-class CreditCard(PaymentMethod):
+class CreditCard(Base, PaymentMethod):
+    __tablename__ = "credit_cards"
+    id = Column(String, ForeignKey('payment_methods.id'), primary_key=True)
+    card_number = Column(String)
+    expiry_date = Column(String)
+    cvv = Column(String)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'credit_card'
+    }
     
     def __init__(self,card_number: str, expiry : str, cvv:str ):
         self.card_number = card_number
@@ -35,8 +46,6 @@ class CreditCard(PaymentMethod):
                 return False
         except ValueError:
             return False #invalid format
-        
-
 
 
         if card_year < current_year:

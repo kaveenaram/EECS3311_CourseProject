@@ -1,16 +1,28 @@
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from entities.consultant import Consultant
+from sqlalchemy import Column, String, Integer, Float, ForeignKey
+from sqlalchemy.orm import relationship
+from backend.entities.consultant import Consultant
+from database.db import Base
 
 """
 Service Class: Represents a consulting service offered by a consultant, including details like name, duration, price, and associated consultant.
 """
 
-class Service:
+class Service(Base):
+    __tablename__ = "services"
+
+    service_id = Column(String, primary_key=True)
+    name = Column(String)
+    description = Column(String)
+    duration = Column(Integer)  # duration in minutes
+    price = Column(Float)
+    consultant_id = Column(String, ForeignKey('consultants.user_id'))
+
+    consultant = relationship("Consultant", back_populates="services")
+    bookings = relationship("Booking", back_populates="service")
+
     # Service constructor initializes service attributes including a reference to the consultant offering the service
 
-    def __init__(self, service_id: str, serviceName: str, duration: int, price: float, consultant: "Consultant"):
+    def __init__(self, service_id: str, serviceName: str, duration: int, price: float, consultant: Consultant):
         self.service_id = service_id
         self.serviceName = serviceName
         self.duration = duration

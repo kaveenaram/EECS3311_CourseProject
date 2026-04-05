@@ -11,15 +11,15 @@ class RequestedState(BookingState):
     # booking can be cancelled by the client
 
     def confirm(self, booking):
-        booking._set_state(ConfirmedState())
+        booking.set_state(ConfirmedState())
         booking.notifyObservers("Booking has been confirmed.")
-        booking._set_state(PendingPaymentState())
+        booking.set_state(PendingPaymentState())
         return booking
     
     def reject(self, booking):
-        booking._set_state(RejectedState())
+        booking.set_state(RejectedState())
         return booking
     
     def cancel(self, booking):
-        booking._set_state(CancelledState())
+        booking.set_state(CancelledState())
         return booking

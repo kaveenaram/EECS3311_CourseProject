@@ -11,6 +11,6 @@ class ConfirmedState(BookingState):
         raise Exception("Booking is already confirmed.")
     
     def cancel(self, booking):
-        booking._set_state(CancelledState())
+        booking.set_state(CancelledState())
         return booking
 

@@ -15,12 +15,12 @@ class PaidState(BookingState):
     def complete(self, booking):
         # payment was made, booking took place
         # booking is completed
-        booking._set_state(CompletedState())
+        booking.set_state(CompletedState())
         return booking
     
     def cancel(self, booking):
         # booking can be cancelled
         # admin refund polices take place
         booking.notifyObservers("Refund will be issued.")
-        booking._set_state(CancelledState())
+        booking.set_state(CancelledState())
         return booking

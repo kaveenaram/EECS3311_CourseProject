@@ -1,13 +1,25 @@
 import time
 from datetime import datetime
+
+from backend.database.db import Base
 from .payment_method import PaymentMethod
 from entities.payment_result import PaymentResult
+from sqlalchemy import Column, String, ForeignKey
 
 """
 BankTransfer Class: Implements the PaymentMethod interface for processing bank transfers.
 """
 
-class BankTransfer(PaymentMethod):
+class BankTransfer(Base, PaymentMethod):
+    __tablename__ = "bank_transfers"
+
+    id = Column(String, ForeignKey('payment_methods.id'), primary_key=True)
+    account_no = Column(String)
+    routing_no = Column(String)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'bank_transfer'
+    }
     
     def __init__(self, account_number: str, routing_number:str):
         self.account_number = account_number

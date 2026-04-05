@@ -1,4 +1,4 @@
-from typing import List
+from sqlalchemy.orm import Session
 from entities.service import Service
 from entities.timeslot import TimeSlot
 from entities.consultant import Consultant
@@ -9,59 +9,51 @@ Provides methods to add services, manage timeslots, and validate slot availabili
 """
 
 class AvailabilityService:
-    def __init__(self):
-        # list all services
-        self.services: List[Service] = []
-        self._load_default_services()
-        
+    def __init__(self, db: Session):
+        self.db = db
 
     def add_service(self, service: Service):
-        self.services.append(service)
+        self.db.add(service)
+        self.db.commit()
 
-    def browse_services(self) -> List[Service]:
-        return self.services
-        
-    # default services and timeslots for testing/demo purposes, can be removed in production
-    def _load_default_services(self):
-        consultant = Consultant("c1", "Alice", "alice@mail.com", "pass")
-
-        self.services.append(Service("s1", "Career Coaching", 60, 120.0, consultant))
-        self.services.append(Service("s2", "Resume Review", 30, 60.0, consultant))
-        self.services.append(Service("s3", "Interview Prep", 45, 90.0, consultant))
-
-        # default timeslots 
-        default_slots = [
-        TimeSlot("ts1", "09:00", "10:00"),
-        TimeSlot("ts2", "10:30", "11:30"),
-        TimeSlot("ts3", "13:00", "14:00"),
-        TimeSlot("ts4", "15:00", "16:00")
-        ]
-        
-        #adding them to consult 
-        for slot in default_slots:
-            consultant.add_timeslot(slot)
-
-    # Methods to manage timeslots for consultants, including adding, removing, browsing available slots, validating slot availability, and marking slots as unavailable when booked.
-
+    def browse_services(self):
+        return self.db.query(Service).all()
+    
     def add_timeslot(self, consultant: Consultant, timeslot: TimeSlot):
-        consultant.add_timeslot(timeslot)
+        timeslot.consultant_id = consultant.consultant_id
+        self.db.add(timeslot)
+        self.db.commit()
 
     def remove_timeslot(self, consultant: Consultant, timeslot: TimeSlot):
-        if timeslot in consultant.timeslots:
-            consultant.timeslots.remove(timeslot)
+        timeslot = self.db.query(TimeSlot).filter_by(id=timeslot.slot_id).first()
+        if timeslot:
+            self.db.delete(timeslot)
+            self.db.commit()
 
-    def get_available_slots(self, consultant: Consultant) -> List[TimeSlot]:
-        return [slot for slot in consultant.timeslots if slot.available]
+    def get_available_slots(self, consultant_id: str):
+        return self.db.query(TimeSlot).filter_by(
+            consultant_id=consultant_id,
+            available=True
+        ).all()
 
     def validate_slot(self, consultant: Consultant, timeslot: TimeSlot) -> bool:
         # Ensures a slot:
-        if timeslot not in consultant.timeslots:
-            raise Exception("Timeslot does not belong to consultant")
+        timeslot = self.db.query(TimeSlot).filter_by(
+            id=timeslot.slot_id,
+            consultant_id=consultant.consultant_id,
+            available=True
+        ).first()
 
-        if not timeslot.available:
-            raise Exception("Timeslot is already booked")
+        if not timeslot:
+            raise Exception("Timeslot does not belong to consultant or is unavailable")
 
         return True
 
-    def mark_slot_unavailable(self, timeslot: TimeSlot):
-        timeslot.mark_unavailable()
+    def mark_slot_unavailable(self, slot_id: str, consultant_id: str):
+        timeslot = self.db.query(TimeSlot).filter_by(
+            slot_id=slot_id,
+            consultant_id=consultant_id
+        ).first()
+        if timeslot:
+            timeslot.mark_unavailable()
+            self.db.commit()
