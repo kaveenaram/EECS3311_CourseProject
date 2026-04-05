@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, ForeignKey
 from .user import User
 from database import db
-from .system_policy import System_Policy
+from .system_policy import SystemPolicy
 from patterns.observer.notification_service import NotificationService
 
 """
@@ -20,7 +20,7 @@ class Admin(User):
     # Uses User constructor for basic user attributes
 
     def __init__(self, user_id: str, name: str, email: str, password: str,
-                 system_policy: System_Policy, notifier: NotificationService):
+                 system_policy: SystemPolicy, notifier: NotificationService):
         super().__init__(user_id, name, email, password)
         self.system_policy = system_policy
         self.notifier = notifier
