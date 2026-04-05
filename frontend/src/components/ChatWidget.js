@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const AI_URL = "http://localhost:8000/api/ai/chat";
+const AI_URL = "http://localhost:5000/api/chat";
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
@@ -27,7 +27,7 @@ export default function ChatWidget() {
 
       setMessages((prev) => [
         ...prev,
-        { text: data.response, sender: "ai" }
+        { text: data.reply, sender: "ai" }
       ]);
     } catch {
       setMessages((prev) => [
