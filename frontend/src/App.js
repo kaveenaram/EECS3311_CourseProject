@@ -5,6 +5,8 @@ import ClientLogin from './pages/ClientLogin';
 import ConsultantLogin from './pages/ConsultantLogin';
 import ConsultantDashboard from './pages/ConsultantDashboard';
 import ConsultantSignup from "./pages/ConsultantSignup";
+import ManageTimeslots from "./pages/ManageTimeslots";
+import ManageServices from "./pages/ManageServices";
 
 
 import ClientDashboard from './pages/ClientDashboard';
@@ -37,6 +39,8 @@ function App() {
         <Route path="/consultant-login" element={<ConsultantLoginWrapper />} />
         <Route path="/consultant-dashboard" element={<ConsultantDashboard />} />
         <Route path="/consultant-signup" element={<ConsultantSignup />} />
+        <Route path="/manage-timeslots" element={<ManageTimeslots />} />
+        <Route path="/manage-services" element={<ManageServices />} />
 
         {/* Admin */}
         <Route path="/admin-login" element={<AdminLogin />} />

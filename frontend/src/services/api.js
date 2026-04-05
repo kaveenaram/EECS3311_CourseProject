@@ -43,3 +43,44 @@ export async function getConsultantBookings(consultantId) {
     return [];
   }
 }
+
+export async function getConsultantTimeslots(consultantId) {
+  // fetch timeslots from backend or return mock
+  return [
+    { slot_id: "ts1", start_time: "09:00", end_time: "10:00", available: true },
+    { slot_id: "ts2", start_time: "10:30", end_time: "11:30", available: true },
+  ];
+}
+
+export async function addTimeslot(consultantId, { start_time, end_time }) {
+  // send POST request to backend, here just mock
+  const newSlot = { slot_id: `ts${Date.now()}`, start_time, end_time, available: true };
+  return newSlot;
+}
+
+export async function deleteTimeslot(consultantId, slotId) {
+  // send DELETE request to backend
+  return true;
+}
+
+// Fetch consultant services
+export async function getConsultantServices(consultantId) {
+  return [
+    { service_id: "s1", serviceName: "Career Coaching", duration: 60, price: 120 },
+    { service_id: "s2", serviceName: "Resume Review", duration: 30, price: 60 },
+  ];
+}
+
+export async function addService(consultantId, { serviceName, duration, price }) {
+  const newService = {
+    service_id: `s${Date.now()}`,
+    serviceName,
+    duration,
+    price,
+  };
+  return newService;
+}
+
+export async function deleteService(consultantId, serviceId) {
+  return true;
+}
