@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, ForeignKey
 from .user import User
-from backend.database import db
+from database import db
 from .system_policy import System_Policy
 from patterns.observer.notification_service import NotificationService
 
