@@ -1,124 +1,103 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
+from entities.consultant import Consultant
+from entities.client import Client
+from entities.booking import Booking
 from services.booking_service import BookingService
 from services.availability_service import AvailabilityService
-from services.payment_service import PaymentService
-from entities.client import Client
-from entities.consultant import Consultant
-from entities.admin import Admin
-from entities.system_policy import SystemPolicy
-from patterns.observer.notification_service import NotificationService
 
 app = Flask(__name__)
+CORS(app)  # allow cross-origin requests from React frontend
 
-# -------------------------------
-# TEMP USERS (until database is connected)
-# -------------------------------
-notifier = NotificationService()
-system_policy = SystemPolicy()
-
+# Sample in-memory "database", until the database is connected 
 users = {
-    "client1": Client("client1", "Client One", "client@domain.com", "password"),
-    "consultant1": Consultant("consultant1", "Consultant One", "consultant@domain.com", "password"),
-    "admin1": Admin("admin1", "Admin One", "admin@domain.com", "password", system_policy, notifier)
+    "consultant1": Consultant("consultant1", "Alice", "alice@mail.com", "pass")
+}
+
+clients = {
+    "client1": Client("client1", "Bob", "bob@mail.com", "pass")
 }
 
 availability_service = AvailabilityService()
 booking_service = BookingService()
-payment_service = PaymentService()
 
-# -------------------------------
-# TEST ROUTE
-# -------------------------------
+# For demo: approve the consultant
+users["consultant1"].approved = True
+
+#first api check 
 @app.route("/")
 def home():
     return "API is running"
 
-# -------------------------------
-# GET ALL BOOKINGS (Admin view or all consultants)
-# -------------------------------
-@app.route("/booking-requests", methods=["GET"])
-def get_booking_requests():
-    all_bookings = []
 
-    # loop through all consultants to gather bookings
-    for user in users.values():
-        if isinstance(user, Consultant):
-            all_bookings.extend(user.get_bookings())
-
-    result = []
-    for b in all_bookings:
-        result.append({
-            "id": b.booking_id,
-            "client": b.client.name,
-            "service": b.service.serviceName,
-            "status": str(b.get_state()),
-            "consultant": b.consultant.name
-        })
-
-    return jsonify(result)
 # -------------------------------
-# Get consultant bookings
+# Consultant login endpoint
 # -------------------------------
+@app.route("/api/consultant/login", methods=["POST"])
+def consultant_login():
+    data = request.get_json(force=True)  # force=True ensures JSON parsing
+    user_id = data.get("user_id")
+    password = data.get("password")
 
-@app.route("/consultant/<consultant_id>/bookings", methods=["GET"])
-def get_consultant_bookings(consultant_id):
+    consultant = users.get(user_id)
+    if not consultant:
+        return jsonify({"success": False, "message": "Consultant not found"}), 404
+    if consultant.logIn(password):
+        return jsonify({"success": True, "consultant_id": consultant.user_id, "name": consultant.name})
+    else:
+        return jsonify({"success": False, "message": "Invalid password"}), 401
+
+# -------------------------------
+# Get all bookings for a consultant
+# -------------------------------
+@app.route("/api/consultant/<consultant_id>/bookings", methods=["GET"])
+def get_bookings(consultant_id):
     consultant = users.get(consultant_id)
-    if not consultant or not isinstance(consultant, Consultant):
-        return jsonify({"error": "Consultant not found"}), 404
+    if not consultant:
+        return jsonify({"success": False, "message": "Consultant not found"}), 404
 
-    bookings = consultant.get_bookings()
-    result = []
-    for b in bookings:
-        result.append({
-            "id": b.booking_id,
-            "client": b.client.name,
-            "service": b.service.serviceName,
-            "status": str(b.get_state()),
-            "timeslot": f"{b.timeslot.start_time} - {b.timeslot.end_time}"
+    bookings_list = []
+    for booking in consultant.bookings:
+        bookings_list.append({
+            "booking_id": booking.booking_id,
+            "client_name": booking.client.name,
+            "service_name": booking.service.serviceName,
+            "start_time": booking.timeslot.start_time,
+            "end_time": booking.timeslot.end_time,
+            "state": str(booking.get_state())
         })
-
-    return jsonify(result)
+    return jsonify(bookings_list)
 
 # -------------------------------
-# ACCEPT BOOKING
+# Approve / Reject / Complete booking
 # -------------------------------
-@app.route("/booking-requests/<booking_id>/accept", methods=["POST"])
-def accept_booking(booking_id):
+@app.route("/api/consultant/<consultant_id>/booking/<booking_id>/<action>", methods=["POST"])
+def update_booking(consultant_id, booking_id, action):
+    consultant = users.get(consultant_id)
+    if not consultant:
+        return jsonify({"success": False, "message": "Consultant not found"}), 404
+
     try:
         booking = booking_service.get_booking(booking_id)
-        booking_service.confirm_booking(booking)
-        return jsonify({"message": "Booking accepted"})
-    except Exception:
-        return jsonify({"error": "Booking not found"}), 404
+        if booking.consultant.user_id != consultant_id:
+            return jsonify({"success": False, "message": "Booking does not belong to this consultant"}), 403
+
+        if action == "approve":
+            booking_service.confirm_booking(booking)
+        elif action == "reject":
+            booking_service.reject_booking(booking)
+        elif action == "complete":
+            booking_service.complete_booking(booking)
+        else:
+            return jsonify({"success": False, "message": "Invalid action"}), 400
+
+        return jsonify({"success": True, "booking_id": booking.booking_id, "state": str(booking.get_state())})
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 400
+    
 
 # -------------------------------
-# REJECT BOOKING
-# -------------------------------
-@app.route("/booking-requests/<booking_id>/reject", methods=["POST"])
-def reject_booking(booking_id):
-    try:
-        booking = booking_service.get_booking(booking_id)
-        booking_service.reject_booking(booking)
-        return jsonify({"message": "Booking rejected"})
-    except Exception:
-        return jsonify({"error": "Booking not found"}), 404
-
-# -------------------------------
-# GET USERS (Admin Dashboard)
-# -------------------------------
-@app.route("/users", methods=["GET"])
-def get_users():
-    result = []
-    for user in users.values():
-        result.append({
-            "id": user.user_id,
-            "name": user.name,
-            "role": type(user).__name__  # Admin, Consultant, or Client
-        })
-    return jsonify(result)
-
-# -------------------------------
-# RUN SERVER
+# Run Flask server
 # -------------------------------
 if __name__ == "__main__":
     app.run(debug=True)
