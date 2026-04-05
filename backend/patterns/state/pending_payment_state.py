@@ -13,9 +13,9 @@ class PendingPaymentState(BookingState):
     # which will transition the booking to the paid state and mark the timeslot as unavailable
     def paid(self, booking, amount: float):
         # payment received
-        booking._set_state(PaidState())
+        booking.set_state(PaidState())
         return booking
 
     def cancel(self, booking):
-        booking._set_state(CancelledState())
+        booking.set_state(CancelledState())
         return booking

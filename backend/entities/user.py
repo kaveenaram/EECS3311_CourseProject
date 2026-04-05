@@ -1,10 +1,26 @@
 from abc import ABC, abstractmethod
+from sqlalchemy import Column, String
+from sqlalchemy.orm import relationship
+from database.db import Base
 
 """
 User Class: Abstract base class representing a user in the system, with common attributes and methods for authentication and session management.
 Both Admins, Consultants, and Clients will inherit from this class.
 """
-class User(ABC):
+
+class User(Base, ABC):
+    __tablename__ = "users"
+
+    user_id = Column(String, primary_key=True)
+    name = Column(String)
+    email = Column(String, unique=True)
+    password = Column(String)
+    role = Column(String)
+
+    __mapper_args__ = {
+        'polymorphic_on': role,
+        'polymorphic_identity': 'user'
+    }
 
     # User constructor initializes common user attributes like user ID, name, email, and password
     def __init__(self, user_id:str, name:str, email:str, password:str):
