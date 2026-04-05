@@ -2,7 +2,7 @@ from typing import List, Any
 import uuid 
 from sqlalchemy import Column, String, Float, ForeignKey, Enum
 from sqlalchemy.orm import relationship
-from backend.patterns.state.requested_state import RequestedState
+from patterns.state.requested_state import RequestedState
 from database.db import Base
 from patterns.observer.subject import Subject
 import enum

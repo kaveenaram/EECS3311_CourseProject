@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 from database.db import Base
@@ -8,7 +8,7 @@ User Class: Abstract base class representing a user in the system, with common a
 Both Admins, Consultants, and Clients will inherit from this class.
 """
 
-class User(Base, ABC):
+class User(Base):
     __tablename__ = "users"
 
     user_id = Column(String, primary_key=True)

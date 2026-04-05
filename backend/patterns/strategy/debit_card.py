@@ -3,7 +3,7 @@ from datetime import datetime
 
 from sqlalchemy import Column, ForeignKey, String
 
-from backend.database.db import Base
+from database.db import Base
 from .payment_method import PaymentMethod
 from entities.payment_result import PaymentResult
 
@@ -11,7 +11,7 @@ from entities.payment_result import PaymentResult
 DebitCard Class: Implements the PaymentMethod interface for processing debit card payments.
 """
 
-class DebitCard(Base, PaymentMethod):
+class DebitCard(PaymentMethod):
     __tablename__ = "debit_cards"
     
     id = Column(String, ForeignKey('payment_methods.id'), primary_key=True)

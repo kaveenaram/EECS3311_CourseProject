@@ -1,7 +1,8 @@
-from backend.database import db
+from database import db
 from .user import User
 from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.orm import relationship
+from patterns.strategy.payment_method import PaymentMethod 
 
 """
 Client Class: User who browses services and books consultating sessions.

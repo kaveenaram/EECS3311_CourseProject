@@ -1,3 +1,4 @@
+from database.db import SessionLocal
 from patterns.state.paid_state import PaidState
 from patterns.state.requested_state import RequestedState
 from patterns.state.booking_state import BookingState
@@ -34,9 +35,10 @@ users = {
     "consultant1": Consultant("consultant1", "consultant", "consultant@domain.com", "password")	
 }
 
-available_services = AvailabilityService()
-booking_service = BookingService()
-payment_service = PaymentService()
+db = SessionLocal()
+available_services = AvailabilityService(db)
+booking_service = BookingService(db)
+payment_service = PaymentService(db)
 
 def main():
 

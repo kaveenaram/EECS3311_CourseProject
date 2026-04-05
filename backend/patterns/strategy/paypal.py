@@ -2,7 +2,7 @@ import re
 import time
 from datetime import datetime
 
-from backend.database.db import Base
+from database.db import Base
 from .payment_method import PaymentMethod
 from entities.payment_result import PaymentResult
 from sqlalchemy import Column, String, ForeignKey
@@ -10,7 +10,7 @@ from sqlalchemy import Column, String, ForeignKey
 """
 Paypal Class: Implements the PaymentMethod interface for processing PayPal payments.
 """
-class Paypal(Base, PaymentMethod):
+class Paypal(PaymentMethod):
     __tablename__ = "paypal"
 
     id = Column(String, ForeignKey('payment_methods.id'), primary_key=True)

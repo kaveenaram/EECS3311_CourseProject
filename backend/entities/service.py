@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Integer, Float, ForeignKey
 from sqlalchemy.orm import relationship
-from backend.entities.consultant import Consultant
+from .consultant import Consultant
 from database.db import Base
 
 """

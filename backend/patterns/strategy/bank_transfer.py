@@ -1,7 +1,7 @@
 import time
 from datetime import datetime
 
-from backend.database.db import Base
+from database.db import Base
 from .payment_method import PaymentMethod
 from entities.payment_result import PaymentResult
 from sqlalchemy import Column, String, ForeignKey
@@ -10,7 +10,7 @@ from sqlalchemy import Column, String, ForeignKey
 BankTransfer Class: Implements the PaymentMethod interface for processing bank transfers.
 """
 
-class BankTransfer(Base, PaymentMethod):
+class BankTransfer(PaymentMethod):
     __tablename__ = "bank_transfers"
 
     id = Column(String, ForeignKey('payment_methods.id'), primary_key=True)

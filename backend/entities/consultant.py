@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from .user import User
-from backend.database import db
+from database import db
 
 """
 Consultant Class: Service provider who offers consulting sessions and manages availability

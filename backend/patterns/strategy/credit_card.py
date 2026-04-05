@@ -1,7 +1,7 @@
 import time
 from datetime import datetime
 from sqlalchemy import ForeignKey, String, Column
-from backend.database.db import Base
+from database.db import Base
 from .payment_method import PaymentMethod
 from entities.payment_result import PaymentResult
 
@@ -9,7 +9,7 @@ from entities.payment_result import PaymentResult
 CreditCard Class: Implements the PaymentMethod interface for processing credit card payments.
 """
 
-class CreditCard(Base, PaymentMethod):
+class CreditCard(PaymentMethod):
     __tablename__ = "credit_cards"
     id = Column(String, ForeignKey('payment_methods.id'), primary_key=True)
     card_number = Column(String)
