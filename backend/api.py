@@ -3,8 +3,10 @@ from flask_cors import CORS
 from entities.consultant import Consultant
 from entities.client import Client
 from entities.booking import Booking
+from entities.service import Service
 from services.booking_service import BookingService
 from services.availability_service import AvailabilityService
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 CORS(app)  # allow cross-origin requests from React frontend
@@ -15,11 +17,53 @@ users = {
 }
 
 clients = {
-    "client1": Client("client1", "Bob", "bob@mail.com", "pass")
+    "client1": Client("client1", "Bob", "bob@mail.com", "pass"),
+    "client2": Client("client2", "Charlie", "charlie@mail.com", "pass")
+}
+
+# Sample services
+services = {
+    "service1": Service(
+        "service1",                  # service_id
+        "Consulting Session",        # serviceName
+        duration=60,                 # duration in minutes
+        price=100.0,                 # price in dollars
+        consultant=users["consultant1"]  # assigned consultant
+    ),
+    "service2": Service(
+        "service2",
+        "Strategy Meeting",
+        duration=90,
+        price=150.0,
+        consultant=users["consultant1"]
+    )
 }
 
 availability_service = AvailabilityService()
 booking_service = BookingService()
+
+# Get consultant
+consultant = users["consultant1"]
+
+# Create bookings
+booking1 = Booking(
+    consultant=consultant,
+    client=clients["client1"],
+    service=services["service1"],
+    timeslot=type('TimeSlot', (), {"start_time": datetime.now(), "end_time": datetime.now() + timedelta(hours=1)})()
+)
+
+booking2 = Booking(
+    consultant=consultant,
+    client=clients["client2"],
+    service=services["service2"],
+    timeslot=type('TimeSlot', (), {"start_time": datetime.now() + timedelta(days=1),
+                                   "end_time": datetime.now() + timedelta(days=1, hours=1)})()
+)
+
+# Attach bookings to consultant
+consultant.bookings.append(booking1)
+consultant.bookings.append(booking2)
 
 # For demo: approve the consultant
 users["consultant1"].approved = True
@@ -36,6 +80,8 @@ def home():
 @app.route("/api/consultant/login", methods=["POST"])
 def consultant_login():
     data = request.get_json(force=True)  # force=True ensures JSON parsing
+    print("Login request data:", data)
+    
     user_id = data.get("user_id")
     password = data.get("password")
 
