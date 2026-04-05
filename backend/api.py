@@ -6,12 +6,15 @@ from entities.booking import Booking
 from entities.service import Service
 from services.booking_service import BookingService
 from services.availability_service import AvailabilityService
+from entities.timeslot import TimeSlot
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
-CORS(app)  # allow cross-origin requests from React frontend
+CORS(app)
 
-# Sample in-memory "database", until the database is connected 
+# -------------------------
+# In-memory "database"
+# -------------------------
 users = {
     "consultant1": Consultant("consultant1", "Alice", "alice@mail.com", "pass")
 }
@@ -23,69 +26,62 @@ clients = {
 
 # Sample services
 services = {
-    "service1": Service(
-        "service1",                  # service_id
-        "Consulting Session",        # serviceName
-        duration=60,                 # duration in minutes
-        price=100.0,                 # price in dollars
-        consultant=users["consultant1"]  # assigned consultant
-    ),
-    "service2": Service(
-        "service2",
-        "Strategy Meeting",
-        duration=90,
-        price=150.0,
-        consultant=users["consultant1"]
-    )
+    "service1": Service("service1", "Consulting Session", duration=60, price=100, consultant=users["consultant1"]),
+    "service2": Service("service2", "Strategy Meeting", duration=90, price=150, consultant=users["consultant1"])
 }
 
 availability_service = AvailabilityService()
 booking_service = BookingService()
 
-# Get consultant
 consultant = users["consultant1"]
 
-# Create bookings
-booking1 = Booking(
-    consultant=consultant,
+# -------------------------
+# Add timeslots for the consultant
+# -------------------------
+ts1 = TimeSlot("ts1", datetime.now(), datetime.now() + timedelta(hours=1))
+ts2 = TimeSlot("ts2", datetime.now() + timedelta(days=1), datetime.now() + timedelta(days=1, hours=1))
+
+consultant.timeslots.extend([ts1, ts2])
+
+# -------------------------
+# Create bookings via BookingService
+# -------------------------
+booking1 = booking_service.create_booking(
     client=clients["client1"],
-    service=services["service1"],
-    timeslot=type('TimeSlot', (), {"start_time": datetime.now(), "end_time": datetime.now() + timedelta(hours=1)})()
-)
-
-booking2 = Booking(
     consultant=consultant,
-    client=clients["client2"],
-    service=services["service2"],
-    timeslot=type('TimeSlot', (), {"start_time": datetime.now() + timedelta(days=1),
-                                   "end_time": datetime.now() + timedelta(days=1, hours=1)})()
+    service=services["service1"],
+    slot=ts1
 )
 
-# Attach bookings to consultant
-consultant.bookings.append(booking1)
-consultant.bookings.append(booking2)
+booking2 = booking_service.create_booking(
+    client=clients["client2"],
+    consultant=consultant,
+    service=services["service2"],
+    slot=ts2
+)
 
-# For demo: approve the consultant
+# -------------------------
+# Verify consultant bookings
+# -------------------------
+print("Consultant bookings:", [b.booking_id for b in consultant.bookings])
+
+# Approve consultant for demo
 users["consultant1"].approved = True
 
-#first api check 
+# -------------------------
+# First API check
+# -------------------------
 @app.route("/")
 def home():
     return "API is running"
 
-
-# -------------------------------
-# Consultant login endpoint
-# -------------------------------
 @app.route("/api/consultant/login", methods=["POST"])
 def consultant_login():
-    data = request.get_json(force=True)  # force=True ensures JSON parsing
-    print("Login request data:", data)
-    
+    data = request.get_json(force=True)
     user_id = data.get("user_id")
     password = data.get("password")
-
     consultant = users.get(user_id)
+
     if not consultant:
         return jsonify({"success": False, "message": "Consultant not found"}), 404
     if consultant.logIn(password):
@@ -93,9 +89,6 @@ def consultant_login():
     else:
         return jsonify({"success": False, "message": "Invalid password"}), 401
 
-# -------------------------------
-# Get all bookings for a consultant
-# -------------------------------
 @app.route("/api/consultant/<consultant_id>/bookings", methods=["GET"])
 def get_bookings(consultant_id):
     consultant = users.get(consultant_id)
@@ -108,42 +101,14 @@ def get_bookings(consultant_id):
             "booking_id": booking.booking_id,
             "client_name": booking.client.name,
             "service_name": booking.service.serviceName,
-            "start_time": booking.timeslot.start_time,
-            "end_time": booking.timeslot.end_time,
+            "start_time": booking.timeslot.start_time.isoformat(),
+            "end_time": booking.timeslot.end_time.isoformat(),
             "state": str(booking.get_state())
         })
     return jsonify(bookings_list)
 
-# -------------------------------
-# Approve / Reject / Complete booking
-# -------------------------------
-@app.route("/api/consultant/<consultant_id>/booking/<booking_id>/<action>", methods=["POST"])
-def update_booking(consultant_id, booking_id, action):
-    consultant = users.get(consultant_id)
-    if not consultant:
-        return jsonify({"success": False, "message": "Consultant not found"}), 404
-
-    try:
-        booking = booking_service.get_booking(booking_id)
-        if booking.consultant.user_id != consultant_id:
-            return jsonify({"success": False, "message": "Booking does not belong to this consultant"}), 403
-
-        if action == "approve":
-            booking_service.confirm_booking(booking)
-        elif action == "reject":
-            booking_service.reject_booking(booking)
-        elif action == "complete":
-            booking_service.complete_booking(booking)
-        else:
-            return jsonify({"success": False, "message": "Invalid action"}), 400
-
-        return jsonify({"success": True, "booking_id": booking.booking_id, "state": str(booking.get_state())})
-    except Exception as e:
-        return jsonify({"success": False, "message": str(e)}), 400
-    
-
-# -------------------------------
-# Run Flask server
-# -------------------------------
+# -------------------------
+# Run server
+# -------------------------
 if __name__ == "__main__":
     app.run(debug=True)

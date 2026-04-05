@@ -8,6 +8,7 @@ export default function ConsultantDashboard() {
   useEffect(() => {
     async function fetchBookings() {
       const data = await getConsultantBookings("consultant1"); // temporary hardcoded
+      console.log("Fetched bookings:", data);  // <--- for testing 
       setBookings(data);
     }
     fetchBookings();
