@@ -154,6 +154,22 @@ def consultant_signup():
         "success": True,
         "message": "Consultant registered successfully. Awaiting approval."
     })
+    
+# -------------------------
+# accept and reject bookings
+# -------------------------
+    
+@app.route("/api/bookings/<booking_id>/confirm", methods=["POST"])
+def confirm_booking(booking_id):
+    booking = booking_service.get_booking(booking_id)
+    booking_service.confirm_booking(booking)
+    return {"message": "Booking confirmed"}
+
+@app.route("/api/bookings/<booking_id>/reject", methods=["POST"])
+def reject_booking(booking_id):
+    booking = booking_service.get_booking(booking_id)
+    booking_service.reject_booking(booking)
+    return {"message": "Booking rejected"}
 
 # -------------------------
 # get all consultants for admin 

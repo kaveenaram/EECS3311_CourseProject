@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // for navigation
 import { getConsultantBookings } from "../services/api";
+import { confirmBooking, rejectBooking } from "../services/api";
 import "./ConsultantDashboard.css";
 
 export default function ConsultantDashboard() {
@@ -22,6 +23,35 @@ export default function ConsultantDashboard() {
     }
     fetchBookings();
   }, []);
+
+  async function handleAccept(bookingId) {
+  try {
+    await confirmBooking(bookingId);
+
+    // update UI instantly (no refresh needed)
+    setBookings((prev) =>
+      prev.map((b) =>
+        b.booking_id === bookingId ? { ...b, state: "CONFIRMED" } : b
+      )
+    );
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function handleReject(bookingId) {
+  try {
+    await rejectBooking(bookingId);
+
+    setBookings((prev) =>
+      prev.map((b) =>
+        b.booking_id === bookingId ? { ...b, state: "REJECTED" } : b
+      )
+    );
+  } catch (err) {
+    console.error(err);
+  }
+}
 
   if (loading) {
     return (
@@ -61,12 +91,13 @@ export default function ConsultantDashboard() {
               <th>Start Time</th>
               <th>End Time</th>
               <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {bookings.length === 0 ? (
               <tr>
-                <td colSpan="6" className="text-center">
+                <td colSpan="7" className="text-center">
                   No bookings available
                 </td>
               </tr>
@@ -78,7 +109,39 @@ export default function ConsultantDashboard() {
                   <td>{b.service_name}</td>
                   <td>{new Date(b.start_time).toLocaleString()}</td>
                   <td>{new Date(b.end_time).toLocaleString()}</td>
-                  <td>{b.state}</td>
+                  <td>
+                    <span
+                      className={
+                        b.state === "CONFIRMED"
+                          ? "text-success"
+                          : b.state === "REJECTED"
+                          ? "text-danger"
+                          : "text-warning"
+                      }
+                    >
+                      {b.state}
+                    </span>
+                  </td>
+                  {/* ACTION BUTTONS */}
+                  <td>
+                    {b.state === "PENDING" && (
+                      <>
+                        <button
+                          className="btn btn-success btn-sm me-2"
+                          onClick={() => handleAccept(b.booking_id)}
+                        >
+                          Accept
+                        </button>
+
+                        <button
+                          className="btn btn-danger btn-sm"
+                          onClick={() => handleReject(b.booking_id)}
+                        >
+                          Reject
+                        </button>
+                      </>
+                    )}
+                </td>
                 </tr>
               ))
             )}
