@@ -14,6 +14,7 @@ import PaymentPage from './pages/PaymentPage';
 
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminPolicies from "./pages/AdminPolicies";
 
 
 // Chatbot
@@ -40,6 +41,7 @@ function App() {
         {/* Admin */}
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/policies" element={<AdminPolicies />} />
       </Routes>
 
       {/* global chatbot */}

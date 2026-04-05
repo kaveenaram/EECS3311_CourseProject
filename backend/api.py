@@ -156,6 +156,43 @@ def consultant_signup():
     })
 
 # -------------------------
+# get all consultants for admin 
+# -------------------------
+@app.route("/api/admin/consultants", methods=["GET"])
+def get_consultants():
+    consultants_list = []
+
+    for u in users.values():
+        if isinstance(u, Consultant):
+            consultants_list.append({
+                "user_id": u.user_id,
+                "name": u.name,
+                "email": u.email,
+                "approved": u.approved
+            })
+
+    return jsonify(consultants_list)
+
+# -------------------------
+#approve consultant endpoint
+# -------------------------
+ 
+@app.route("/api/admin/approve/<consultant_id>", methods=["POST"])
+def approve_consultant(consultant_id):
+    admin = admins.get("admin1")  # simple for now
+    consultant = users.get(consultant_id)
+
+    if not consultant:
+        return jsonify({"success": False, "message": "Consultant not found"}), 404
+
+    admin.approveConsultant(consultant)
+
+    return jsonify({
+        "success": True,
+        "message": f"{consultant.name} approved"
+    })
+
+# -------------------------
 # get booking
 # -------------------------
 
@@ -202,25 +239,17 @@ def admin_login():
         })
 
     return jsonify({"success": False, "message": "Invalid password"}), 401
-
 # -------------------------
-#approve consultant endpoint
+#get policies for admin
 # -------------------------
 
- 
-@app.route("/api/admin/approve/<consultant_id>", methods=["POST"])
-def approve_consultant(consultant_id):
-    admin = admins.get("admin1")  # simple for now
-    consultant = users.get(consultant_id)
-
-    if not consultant:
-        return jsonify({"success": False, "message": "Consultant not found"}), 404
-
-    admin.approveConsultant(consultant)
-
+@app.route("/api/admin/get-policies", methods=["GET"])
+def get_policies():
+    admin = admins.get("admin1")
     return jsonify({
-        "success": True,
-        "message": f"{consultant.name} approved"
+        "cancellationRules": admin.system_policy.cancellationRules,
+        "pricingStrategy": admin.system_policy.pricingStrategy,
+        "refundPolicy": admin.system_policy.refundPolicy
     })
 
 # -------------------------
