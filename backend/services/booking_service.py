@@ -13,7 +13,6 @@ Provides methods to create a booking by validating slot availability and associa
     # BookingService now interacts with the database
 
 from sqlalchemy.orm import Session
-from database.models import Booking as BookingModel, TimeSlot as TimeSlotModel, BookingState
 import uuid
 
 class BookingService:
@@ -38,17 +37,11 @@ class BookingService:
             raise Exception("Timeslot does not belong to consultant.")
 
         # Create booking
-        booking = BookingModel(
-            id=str(uuid.uuid4()),
-            client_id=client.id,
-            consultant_id=consultant.id,
-            service_id=service.id,
-            timeslot_id=slot.slot_id,
-            state=BookingState.requested
-        )
+        booking = Booking(client, consultant, service, slot)
 
         self.db.add(booking)
         self.db.commit()
+        self.db.refresh(booking)
         
         return booking
 
@@ -57,7 +50,7 @@ class BookingService:
         booking.confirm()
 
         # Remove slot after confirm
-        db_slot = self.db.query(TimeSlotModel).filter_by(
+        db_slot = self.db.query(TimeSlot).filter_by(
             slot_id=booking.timeslot_id
         ).first()
         db_slot.mark_unavailable()
@@ -67,13 +60,20 @@ class BookingService:
 
     def reject_booking(self, booking: Booking):
         booking.reject()
+        self.db.commit()
     def cancel_booking(self, booking: Booking):
         booking.cancel()
+        db_slot = self.db.query(TimeSlot).filter_by(id=booking.timeslot_id).first()
+        if db_slot:
+            db_slot.mark_available()
+        self.db.commit()
+
     def complete_booking(self, booking: Booking):
         booking.complete()
+        self.db.commit()
 
     def get_booking(self, booking_id: str) -> Booking:
-        booking = self.db.query(BookingModel).filter_by(booking_id=booking_id).first()
+        booking = self.db.query(Booking).filter_by(booking_id=booking_id).first()
         if not booking:
             raise Exception("Booking does not exist")
         return booking
