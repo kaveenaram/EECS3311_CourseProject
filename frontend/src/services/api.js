@@ -116,3 +116,11 @@ export async function addService(consultantId, { serviceName, duration, price })
 export async function deleteService(consultantId, serviceId) {
   return true;
 }
+
+export async function confirmBooking(bookingId) {
+  return await postData(`api/bookings/${bookingId}/confirm`);
+}
+
+export async function rejectBooking(bookingId) {
+  return await postData(`api/bookings/${bookingId}/reject`);
+}
