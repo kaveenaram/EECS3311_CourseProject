@@ -1,0 +1,12 @@
+main.py
+FLASK_APP=app.py__pycache__
+*.pyc
+.git
+.gitignore
+.env
+.env.local
+node_modules
+.DS_Store
+venv
+.pytest_cache
+*.log
