@@ -123,6 +123,37 @@ def consultant_login():
         "success": False,
         "message": "Invalid password"
     }), 401
+    
+# -------------------------
+# consultant signup
+# -------------------------
+    
+@app.route("/api/consultant/signup", methods=["POST"])
+def consultant_signup():
+    data = request.get_json(force=True)
+
+    user_id = data.get("user_id")
+    name = data.get("name")
+    email = data.get("email")
+    password = data.get("password")
+
+    # Check if already exists
+    if user_id in users:
+        return jsonify({
+            "success": False,
+            "message": "User ID already exists"
+        }), 400
+
+    # Create new consultant (approved = False by default)
+    consultant = Consultant(user_id, name, email, password)
+    users[user_id] = consultant
+
+    print(f"New consultant created: {consultant}")
+
+    return jsonify({
+        "success": True,
+        "message": "Consultant registered successfully. Awaiting approval."
+    })
 
 # -------------------------
 # get booking

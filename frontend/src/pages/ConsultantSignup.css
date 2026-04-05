@@ -1,0 +1,87 @@
+/* Full page: center content */
+.full-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Glassy box */
+.login-box {
+  border-radius: 15px;
+  padding: 40px;
+  max-width: 400px;
+  width: 100%;
+  cursor: pointer;
+
+  /* Transparent so gradient shows through */
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+/* Hover effect */
+.login-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+/* Title */
+.title {
+  text-align: center;
+  color: white;
+  margin-bottom: 20px;
+}
+
+/* Inputs */
+.login-box input {
+  width: 100%;
+  margin-bottom: 15px;
+  background: rgba(255, 255, 255, 0.25);
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  color: #fff;
+}
+
+.login-box input::placeholder {
+  color: #f0f0f0;
+}
+
+/* Button */
+.login-box button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  font-weight: bold;
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.login-box button:hover {
+  background: white;
+}
+
+/* Bottom link */
+.login-link {
+  text-align: center;
+  margin-top: 15px;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.login-link span {
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: underline;
+}

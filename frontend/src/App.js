@@ -4,12 +4,14 @@ import Home from './pages/Home';
 import ClientLogin from './pages/ClientLogin';
 import ConsultantLogin from './pages/ConsultantLogin';
 import ConsultantDashboard from './pages/ConsultantDashboard';
+import ConsultantSignup from "./pages/ConsultantSignup";
 
 
 import ClientDashboard from './pages/ClientDashboard';
 import BrowseServicesPage from './pages/BrowseServicesPage';
 import BookingHistoryPage from './pages/BookingHistoryPage';
 import PaymentPage from './pages/PaymentPage';
+
 
 // Chatbot
 import ChatWidget from './components/ChatWidget';
@@ -30,6 +32,7 @@ function App() {
         {/* Consultant */}
         <Route path="/consultant-login" element={<ConsultantLoginWrapper />} />
         <Route path="/consultant-dashboard" element={<ConsultantDashboard />} />
+        <Route path="/consultant-signup" element={<ConsultantSignup />} />
       </Routes>
 
       {/* global chatbot */}
