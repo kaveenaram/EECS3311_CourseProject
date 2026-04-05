@@ -38,8 +38,10 @@ export async function getConsultantBookings(consultantId) {
   try {
     // Try fetching from backend
     const res = await getData(`api/consultant/${consultantId}/bookings`);
-    // If backend returns bookings, use them
-    return res.bookings || [];
+    console.log("Backend response:", res); // for debugging
+    
+    return res || [];
+
   } catch (err) {
     console.error("Backend unavailable, using mock data:", err);
 
