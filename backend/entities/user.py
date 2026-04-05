@@ -1,4 +1,3 @@
-from abc import abstractmethod
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 from database.db import Base
@@ -30,11 +29,9 @@ class User(Base):
         self.password = password
 
     # Abstract methods for login and logout that must be implemented by subclasses, ensuring that each user type can have customized authentication behavior
-    @abstractmethod
     def logIn(self,password:str) ->bool:
         pass
 
-    @abstractmethod
     def logOut(self) ->None:
         pass 
 
