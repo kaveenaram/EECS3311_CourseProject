@@ -22,4 +22,26 @@ export async function putData(endpoint, data) {
     });
     return res.json();
 }
-________________________________________
+
+// Consultant login
+export async function loginConsultant(username, password) {
+  try {
+    const res = await postData("api/consultant/login", { username, password });
+    // return both success status and consultant data
+    return { success: res.success, consultant: res.consultant || null };
+  } catch (err) {
+    console.error(err);
+    return { success: false, consultant: null };
+  }
+}
+
+// Get consultant bookings
+export async function getConsultantBookings(consultantId) {
+  try {
+    const res = await getData(`api/consultant/${consultantId}/bookings`);
+    return res.bookings || [];
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+}

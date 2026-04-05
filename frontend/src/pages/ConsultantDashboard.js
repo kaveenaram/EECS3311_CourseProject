@@ -1,16 +1,22 @@
-//import AvailabilityManager from "../components/AvailabilityManager";
-//import BookingRequests from "../components/BookingRequests";
-//import ScheduleView from "../components/ScheduleView";
+import { useEffect, useState } from "react";
+import { getConsultantBookings } from "../services/api";
+import BookingTable from "../components/BookingTable";
 
-function ConsultantDashboard(){
-    return (
-        <div>
-            <h1>Consultant Dashboard</h1>
-            {/*<AvailabilityManager/>
-            <BookingRequests/>
-            <ScheduleView/>*/}
-        </div>
-    );
+export default function ConsultantDashboard() {
+  const [bookings, setBookings] = useState([]);
+
+  useEffect(() => {
+    async function fetchBookings() {
+      const data = await getConsultantBookings("consultant1"); // temporary hardcoded
+      setBookings(data);
+    }
+    fetchBookings();
+  }, []);
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>Consultant Dashboard</h1>
+      <BookingTable bookings={bookings} />
+    </div>
+  );
 }
-
-export default ConsultantDashboard;

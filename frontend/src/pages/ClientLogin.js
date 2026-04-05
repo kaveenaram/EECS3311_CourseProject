@@ -17,4 +17,4 @@ function ClientLogin(){
     
 }
 
-export  default ClientLogin;
+export default ClientLogin;

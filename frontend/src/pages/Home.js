@@ -6,7 +6,7 @@ function Home() {
 
   return (
     <div className="landing-container">
-      <h1 className="mb-5 text-white">Welcome!</h1>
+      <h1 className="mb-5 text-white">Welcome to Consulting Booking System!</h1>
 
       <div className="landing-row">
         {/* Client Box */}
