@@ -5,7 +5,6 @@ function ClientSignup() {
   const navigate = useNavigate();
 
   function handleSignup() {
-    // No backend yet → just redirect
     alert("Signup successful!");
     navigate("/client-login");
   }
