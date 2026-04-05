@@ -25,7 +25,7 @@ services:
   backend:
     build: ./backend
     environment:
-      - FLASK_APP=app:app
+      - FLASK_APP=api:app
       - FLASK_ENV=production
       - DATABASE_URL=mysql+pymysql://${DB_USER}:${DB_PASSWORD}@db:3306/${DB_NAME}
     command: python -m flask run --host=0.0.0.0
