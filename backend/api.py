@@ -50,10 +50,11 @@ if __name__ == '__main__':
 # necessary dependancies 
 # -------------------------
 
-availability_service = AvailabilityService()
-booking_service = BookingService()
-system_policy = SystemPolicy()
-notifier = NotificationService()
+db = SessionLocal()
+availability_service = AvailabilityService(db)
+booking_service = BookingService(db)
+system_policy = SystemPolicy(db)
+notifier = NotificationService(db)
 
 # -------------------------
 # In-memory "database"
