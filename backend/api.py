@@ -11,6 +11,7 @@ from services.booking_service import BookingService
 from services.availability_service import AvailabilityService
 from entities.timeslot import TimeSlot
 from datetime import datetime, timedelta
+from ai.ai_service import ask_ai
 
 app = Flask(__name__)
 CORS(app)
@@ -299,7 +300,16 @@ def update_policy():
             "refundPolicy": admin.system_policy.refundPolicy
         }
     })
+@app.route("/api/chat", methods=["POST"])
+def chat_with_ai():
+    data = request.get_json(force=True)
+    user_message = data.get("message", "")
 
+    if not user_message:
+        return jsonify({"error": "Message is required"}), 400
+
+    reply = ask_ai(user_message)
+    return jsonify({"reply": reply})
 # -------------------------
 # Run server
 # -------------------------
