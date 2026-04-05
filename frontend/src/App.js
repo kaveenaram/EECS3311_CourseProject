@@ -3,6 +3,8 @@ import Home from './pages/Home';
 import ClientLogin from './pages/ClientLogin';
 import ConsultantLogin from './pages/ConsultantLogin';
 import ConsultantDashboard from './pages/ConsultantDashboard';
+import AdminLogin from './pages/AdminLogin';
+import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   return (
@@ -12,6 +14,8 @@ function App() {
         <Route path="/client-login" element={<ClientLogin />} />
         <Route path="/consultant-login" element={<ConsultantLoginWrapper />} />
         <Route path="/consultant-dashboard" element={<ConsultantDashboard />} />
+        <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
       </Routes>
     </Router>
   );

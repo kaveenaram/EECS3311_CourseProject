@@ -4,6 +4,9 @@ from entities.consultant import Consultant
 from entities.client import Client
 from entities.booking import Booking
 from entities.service import Service
+from entities.admin import Admin
+from entities.system_policy import SystemPolicy
+from patterns.observer.notification_service import NotificationService
 from services.booking_service import BookingService
 from services.availability_service import AvailabilityService
 from entities.timeslot import TimeSlot
@@ -11,6 +14,15 @@ from datetime import datetime, timedelta
 
 app = Flask(__name__)
 CORS(app)
+
+# -------------------------
+# necessary dependancies 
+# -------------------------
+
+availability_service = AvailabilityService()
+booking_service = BookingService()
+system_policy = SystemPolicy()
+notifier = NotificationService()
 
 # -------------------------
 # In-memory "database"
@@ -24,14 +36,17 @@ clients = {
     "client2": Client("client2", "Charlie", "charlie@mail.com", "pass")
 }
 
+admins = {
+    "admin1": Admin("admin1", "SuperAdmin", "admin@mail.com", "pass", system_policy, notifier)
+}
+
 # Sample services
 services = {
     "service1": Service("service1", "Consulting Session", duration=60, price=100, consultant=users["consultant1"]),
     "service2": Service("service2", "Strategy Meeting", duration=90, price=150, consultant=users["consultant1"])
 }
 
-availability_service = AvailabilityService()
-booking_service = BookingService()
+
 
 consultant = users["consultant1"]
 
@@ -75,6 +90,10 @@ users["consultant1"].approved = True
 def home():
     return "API is running"
 
+# -------------------------
+# consultant login endpoint
+# -------------------------
+
 @app.route("/api/consultant/login", methods=["POST"])
 def consultant_login():
     data = request.get_json(force=True)
@@ -84,10 +103,31 @@ def consultant_login():
 
     if not consultant:
         return jsonify({"success": False, "message": "Consultant not found"}), 404
+
+    # Check approval FIRST
+    if not consultant.approved:
+        return jsonify({
+            "success": False,
+            "message": "Consultant not approved yet"
+        }), 403
+
+    # Then check password
     if consultant.logIn(password):
-        return jsonify({"success": True, "consultant_id": consultant.user_id, "name": consultant.name})
-    else:
-        return jsonify({"success": False, "message": "Invalid password"}), 401
+        return jsonify({
+            "success": True,
+            "consultant_id": consultant.user_id,
+            "name": consultant.name
+        })
+
+    return jsonify({
+        "success": False,
+        "message": "Invalid password"
+    }), 401
+
+# -------------------------
+# get booking
+# -------------------------
+
 
 @app.route("/api/consultant/<consultant_id>/bookings", methods=["GET"])
 def get_bookings(consultant_id):
@@ -106,6 +146,83 @@ def get_bookings(consultant_id):
             "state": str(booking.get_state())
         })
     return jsonify(bookings_list)
+
+# -------------------------
+#admin login endpoint 
+# -------------------------
+
+
+@app.route("/api/admin/login", methods=["POST"])
+def admin_login():
+    data = request.get_json(force=True)
+    user_id = data.get("user_id")
+    password = data.get("password")
+
+    admin = admins.get(user_id)
+
+    if not admin:
+        return jsonify({"success": False, "message": "Admin not found"}), 404
+
+    if admin.logIn(password):
+        return jsonify({
+            "success": True,
+            "admin_id": admin.user_id,
+            "name": admin.name
+        })
+
+    return jsonify({"success": False, "message": "Invalid password"}), 401
+
+# -------------------------
+#approve consultant endpoint
+# -------------------------
+
+ 
+@app.route("/api/admin/approve/<consultant_id>", methods=["POST"])
+def approve_consultant(consultant_id):
+    admin = admins.get("admin1")  # simple for now
+    consultant = users.get(consultant_id)
+
+    if not consultant:
+        return jsonify({"success": False, "message": "Consultant not found"}), 404
+
+    admin.approveConsultant(consultant)
+
+    return jsonify({
+        "success": True,
+        "message": f"{consultant.name} approved"
+    })
+
+# -------------------------
+#admin update policy 
+# -------------------------
+
+@app.route("/api/admin/update-policy", methods=["POST"])
+def update_policy():
+    data = request.get_json(force=True)
+
+    admin = admins.get("admin1")
+
+    admin.updatePolicies(
+        cancellation_rules=data.get("cancellation_rules"),
+        pricing_strategy=data.get("pricing_strategy"),
+        refund_policy=data.get("refund_policy")
+    )
+
+    # Debug print (VERY useful)
+    print("Updated Policies:")
+    print("Cancellation:", admin.system_policy.cancellationRules)
+    print("Pricing:", admin.system_policy.pricingStrategy)
+    print("Refund:", admin.system_policy.refundPolicy)
+
+    return jsonify({
+        "success": True,
+        "message": "Policies updated",
+        "policies": {
+            "cancellationRules": admin.system_policy.cancellationRules,
+            "pricingStrategy": admin.system_policy.pricingStrategy,
+            "refundPolicy": admin.system_policy.refundPolicy
+        }
+    })
 
 # -------------------------
 # Run server
