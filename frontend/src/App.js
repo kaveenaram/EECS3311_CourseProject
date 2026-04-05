@@ -12,6 +12,9 @@ import BrowseServicesPage from './pages/BrowseServicesPage';
 import BookingHistoryPage from './pages/BookingHistoryPage';
 import PaymentPage from './pages/PaymentPage';
 
+import AdminLogin from './pages/AdminLogin';
+import AdminDashboard from './pages/AdminDashboard';
+
 
 // Chatbot
 import ChatWidget from './components/ChatWidget';
@@ -33,6 +36,10 @@ function App() {
         <Route path="/consultant-login" element={<ConsultantLoginWrapper />} />
         <Route path="/consultant-dashboard" element={<ConsultantDashboard />} />
         <Route path="/consultant-signup" element={<ConsultantSignup />} />
+
+        {/* Admin */}
+        <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
       </Routes>
 
       {/* global chatbot */}
