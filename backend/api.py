@@ -51,10 +51,7 @@ if __name__ == '__main__':
 # -------------------------
 
 # call db = SessionLocal() every time you need a db session and then close it when done (try/finally or with statement)
-availability_service = AvailabilityService(db)
-booking_service = BookingService(db)
-system_policy = SystemPolicy(db)
-notifier = NotificationService(db)
+# initalize services with db session when needed (e.g. booking_service = BookingService(db))
 
 # -------------------------
 # In-memory "database"
