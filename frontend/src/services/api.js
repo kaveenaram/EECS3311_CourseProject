@@ -33,14 +33,46 @@ export async function loginConsultant(userId, password) {
   }
 }
 
-// Get consultant bookings
+// Get consultant bookings with fallback to mock data
 export async function getConsultantBookings(consultantId) {
   try {
+    // Try fetching from backend
     const res = await getData(`api/consultant/${consultantId}/bookings`);
+    // If backend returns bookings, use them
     return res.bookings || [];
   } catch (err) {
-    console.error(err);
-    return [];
+    console.error("Backend unavailable, using mock data:", err);
+
+    // Mock bookings fallback
+    const mockBookings = [
+      {
+        booking_id: "b1",
+        client_name: "John Doe",
+        service_name: "Career Coaching",
+        start_time: "2026-04-05T09:00:00",
+        end_time: "2026-04-05T10:00:00",
+        state: "Pending"
+      },
+      {
+        booking_id: "b2",
+        client_name: "Jane Smith",
+        service_name: "Resume Review",
+        start_time: "2026-04-05T10:30:00",
+        end_time: "2026-04-05T11:00:00",
+        state: "Confirmed"
+      },
+      {
+        booking_id: "b3",
+        client_name: "Mark Taylor",
+        service_name: "Interview Prep",
+        start_time: "2026-04-05T11:30:00",
+        end_time: "2026-04-05T12:00:00",
+        state: "Rejected"
+      }
+    ];
+
+    // Simulate async network call
+    return new Promise((resolve) => setTimeout(() => resolve(mockBookings), 500));
   }
 }
 

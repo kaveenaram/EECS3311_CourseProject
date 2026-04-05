@@ -12,6 +12,7 @@ export default function ConsultantDashboard() {
     async function fetchBookings() {
       try {
         const data = await getConsultantBookings("consultant1"); // hardcoded
+        console.log("Fetched bookings:", data); // check what comes here in testing 
         setBookings(data);
         setLoading(false);
       } catch (err) {
