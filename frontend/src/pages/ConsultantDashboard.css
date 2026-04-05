@@ -1,0 +1,42 @@
+.consultant-dashboard {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  max-width: 900px;
+  margin: auto;
+}
+
+.consultant-dashboard h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #000000;
+  font-size: 1.8rem;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+.table-dark {
+  background-color: #4b2e83;
+  color: white;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.text-center {
+  text-align: center;
+}

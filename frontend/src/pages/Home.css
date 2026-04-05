@@ -15,12 +15,12 @@
 /* Individual boxes */
 .landing-box {
   color: white;
-  height: 100%;
   border-radius: 15px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.2);
   transition: transform 0.3s, box-shadow 0.3s;
   cursor: pointer;
-  flex: 0 0 300px; /* width of box */
+  width: 300px;       /* keeps consistent width */
+  height: auto; 
 }
 
 .landing-box:hover {
@@ -48,4 +48,36 @@
 /* Buttons */
 .landing-card-body .btn {
   margin-top: 1rem;
+}
+
+/* Stack consultant + signup vertically */
+.consultant-column {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  align-items: center;
+}
+
+/* signup slightly smaller */
+.signup-box {
+  padding: 4px;
+}
+
+.signup-box .landing-card-body {
+  padding: 1rem;   /* smaller than consultant */
+}
+
+.signup-box p {
+  margin-bottom: 0;  /* removes space below "New Consultant?" */
+}
+
+/* Client signup color */
+.client-signup {
+  background: linear-gradient(135deg, #8a2be2, #6a0dad);
+}
+
+/* Consultant signup color */
+.consultant-signup {
+   background: linear-gradient(135deg, #1e90ff, #4b0082);
 }

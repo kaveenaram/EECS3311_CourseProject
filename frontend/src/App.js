@@ -1,20 +1,69 @@
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+
 import Home from './pages/Home';
 import ClientLogin from './pages/ClientLogin';
 import ConsultantLogin from './pages/ConsultantLogin';
 import ConsultantDashboard from './pages/ConsultantDashboard';
+import ConsultantSignup from "./pages/ConsultantSignup";
+import ManageTimeslots from "./pages/ManageTimeslots";
+import ManageServices from "./pages/ManageServices";
+
+
+import ClientDashboard from './pages/ClientDashboard';
+import BrowseServicesPage from './pages/BrowseServicesPage';
+import BookingHistoryPage from './pages/BookingHistoryPage';
+import PaymentPage from './pages/PaymentPage';
+
+import AdminLogin from './pages/AdminLogin';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminPolicies from "./pages/AdminPolicies";
+
+
+// Chatbot
+import ChatWidget from './components/ChatWidget';
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/client-login" element={<ClientLogin />} />
+
+        {/* Client */}
+        <Route path="/client-login" element={<ClientLoginWrapper />} />
+        <Route path="/client-dashboard" element={<ClientDashboard />} />
+        <Route path="/services" element={<BrowseServicesPage />} />
+        <Route path="/bookings" element={<BookingHistoryPage />} />
+        <Route path="/payments" element={<PaymentPage />} />
+
+        {/* Consultant */}
         <Route path="/consultant-login" element={<ConsultantLoginWrapper />} />
         <Route path="/consultant-dashboard" element={<ConsultantDashboard />} />
+        <Route path="/consultant-signup" element={<ConsultantSignup />} />
+        <Route path="/manage-timeslots" element={<ManageTimeslots />} />
+        <Route path="/manage-services" element={<ManageServices />} />
+
+        {/* Admin */}
+        <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/policies" element={<AdminPolicies />} />
       </Routes>
+
+      {/* global chatbot */}
+      <ChatWidget />
     </Router>
   );
+}
+
+
+// Client login wraper
+function ClientLoginWrapper() {
+  const navigate = useNavigate();
+
+  const handleLoginSuccess = () => {
+    navigate('/client-dashboard');
+  };
+
+  return <ClientLogin onLoginSuccess={handleLoginSuccess} />;
 }
 
 // Wrapper to use useNavigate inside the Route
