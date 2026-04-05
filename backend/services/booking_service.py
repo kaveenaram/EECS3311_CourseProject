@@ -8,30 +8,47 @@ from entities.service import Service
 BookingService Class: Handles the core logic for managing bookings, including creating, confirming, rejecting, cancelling, and completing bookings.
 Provides methods to create a booking by validating slot availability and associating it with the client and consultant, as well as methods to update the booking status and retrieve bookings by ID.
 """
+
+# UPDATED IN PHASE 2
+    # BookingService now interacts with the database
+
+from sqlalchemy.orm import Session
+from database.models import Booking as BookingModel, TimeSlot as TimeSlotModel, BookingState
+import uuid
+
 class BookingService:
-    def __init__(self):
-        self.bookings = []
+
+    def __init__(self, db: Session):
+        self.db = db
 
     def create_booking(self, client: Client, consultant: Consultant, service: Service, slot: TimeSlot) -> Booking:
 
         # Slot availability
-        if not slot.available:
+        # db query
+        db_slot = self.db.query(TimeSlot).filter_by(
+            slot_id=slot.slot_id,
+            available=True
+        ).first()
+
+        if not db_slot:
             raise Exception("Timeslot is not available.")
 
         # Ensure slot belongs to consultant
-        if slot not in consultant.timeslots:
+        if db_slot.consultant_id != consultant.id:
             raise Exception("Timeslot does not belong to consultant.")
 
         # Create booking
-        booking = Booking(
-            client,
-            consultant,
-            service,
-            slot
+        booking = BookingModel(
+            id=str(uuid.uuid4()),
+            client_id=client.id,
+            consultant_id=consultant.id,
+            service_id=service.id,
+            timeslot_id=slot.slot_id,
+            state=BookingState.requested
         )
-        self.bookings.append(booking)
-        client.bookings.append(booking)
-        consultant.bookings.append(booking)
+
+        self.db.add(booking)
+        self.db.commit()
         
         return booking
 
@@ -40,7 +57,11 @@ class BookingService:
         booking.confirm()
 
         # Remove slot after confirm
-        booking.timeslot.mark_unavailable()
+        db_slot = self.db.query(TimeSlotModel).filter_by(
+            slot_id=booking.timeslot_id
+        ).first()
+        db_slot.mark_unavailable()
+        self.db.commit()
 
     
 
@@ -52,8 +73,8 @@ class BookingService:
         booking.complete()
 
     def get_booking(self, booking_id: str) -> Booking:
-        for book in self.bookings:
-            if book.booking_id == booking_id:
-                return book
-        raise Exception("Booking does not exist")
+        booking = self.db.query(BookingModel).filter_by(booking_id=booking_id).first()
+        if not booking:
+            raise Exception("Booking does not exist")
+        return booking
 

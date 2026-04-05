@@ -1,5 +1,9 @@
 import time
 from datetime import datetime
+
+from sqlalchemy import Column, ForeignKey, String
+
+from backend.database.db import Base
 from .payment_method import PaymentMethod
 from entities.payment_result import PaymentResult
 
@@ -7,7 +11,17 @@ from entities.payment_result import PaymentResult
 DebitCard Class: Implements the PaymentMethod interface for processing debit card payments.
 """
 
-class DebitCard(PaymentMethod):
+class DebitCard(Base, PaymentMethod):
+    __tablename__ = "debit_cards"
+    
+    id = Column(String, ForeignKey('payment_methods.id'), primary_key=True)
+    card_number = Column(String)
+    expiry_date = Column(String)
+    cvv = Column(String)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'debit_card'
+    }
     
     def __init__(self,card_number: str, expiry : str, cvv:str ):
         self.card_number = card_number
@@ -36,8 +50,6 @@ class DebitCard(PaymentMethod):
         except ValueError:
             return False #invalid format
         
-
-
 
         if card_year < current_year:
             return False 
