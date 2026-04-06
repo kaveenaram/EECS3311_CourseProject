@@ -123,7 +123,6 @@ paste the above API key in the appropriate field like this: GROQ_API_KEY=<<key>>
 ### Ha An Do
   Front End Build
   - Enhanced the Phase 1 frontend using React.js, HTML, CSS, and JavaScript to support all core system workflows.
-  - Integrated the Dockerized environment, ensuring the frontend communicates properly with backend and database services.
   - Connected the AI Customer Assistant to the frontend interface, enabling users to access the chatbot directly within the application.
 
 ### Meleena Subasinghe
