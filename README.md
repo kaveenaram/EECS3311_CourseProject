@@ -71,12 +71,34 @@ Use Cases Covered:
 
 
 ###• How to access the AI Customer Assistant chatbot
+####Prerequisites:
+Node.js (for the frontend)
+Python 3 (for the backend)
+Virtual Environment:
+  python -m venv venv
+  .\venv\Scripts\activate
 
+Install backend dependencies:
+  pip install -r requirements.txt
 
+Install frontend dependencied:
+  npm install
+
+1. Start the backend
+2. Run the flask server 
+    python api.py
+3. Start the frontend
+    npm start
+4. Locate the chat icon on the bottom right of the screen
+5. Type in your question and our AI assistant will be ready to chat!
 
 
 ###• Any API keys or configuration needed
 
+Create an API key on Groq
+
+create a .env file under "backend" (see .env.example for the correct format)
+paste the above API key in the appropriate field like this: GROQ_API_KEY=<<key>>
 
 
 ###• GitHub repository URL (same as Phase 1)
