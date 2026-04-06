@@ -66,12 +66,12 @@ Use Cases Covered:
 
 # Team9_Phase2 EECS-3311 Course Project
 
-###• How to build and run with Docker
+###  How to build and run with Docker
 
 
 
-###• How to access the AI Customer Assistant chatbot
-####Prerequisites:
+### How to access the AI Customer Assistant chatbot
+### Prerequisites:
 Node.js (for the frontend)
 Python 3 (for the backend)
 Virtual Environment:
@@ -93,7 +93,7 @@ Install frontend dependencied:
 5. Type in your question and our AI assistant will be ready to chat!
 
 
-###• Any API keys or configuration needed
+###  Any API keys or configuration needed
 
 Create an API key on Groq
 
@@ -101,7 +101,7 @@ create a .env file under "backend" (see .env.example for the correct format)
 paste the above API key in the appropriate field like this: GROQ_API_KEY=<<key>>
 
 
-###• GitHub repository URL (same as Phase 1)
+###  GitHub repository URL (same as Phase 1)
   - https://github.com/kaveenaram/EECS3311_CourseProject/tree/main
 
 ## - Team Contributions
