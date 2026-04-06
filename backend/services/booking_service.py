@@ -33,7 +33,7 @@ class BookingService:
             raise Exception("Timeslot is not available.")
 
         # Ensure slot belongs to consultant
-        if db_slot.consultant_id != consultant.id:
+        if db_slot.consultant_id != consultant.user_id:
             raise Exception("Timeslot does not belong to consultant.")
 
         # Create booking

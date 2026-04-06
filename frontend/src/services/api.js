@@ -220,7 +220,7 @@ export async function updatePolicies(adminId, policies) {
 export async function getServices() {
   try {
     const res = await getData("api/services");
-    return res || [];
+    return Array.isArray(res) ? res : [];
   } catch (err) {
     console.error("Error fetching services:", err);
     return [];
@@ -233,6 +233,16 @@ export async function getTimeslots(consultantId) {
     return res || [];
   } catch (err) {
     console.error("Error fetching timeslots:", err);
+    return [];
+  }
+}
+
+export async function getAvailableSlots(consultantId, serviceId) {
+  try {
+    const res = await getData(`api/consultant/${consultantId}/available-slots?service_id=${serviceId}`);
+    return Array.isArray(res) ? res : [];
+  } catch (err) {
+    console.error("Error fetching available slots:", err);
     return [];
   }
 }
@@ -279,5 +289,27 @@ export async function cancelBooking(bookingId) {
   } catch (err) {
     console.error("Error cancelling booking:", err);
     return { success: false };
+  }
+}
+
+// Admin - Get all payments
+export async function getAllPayments(adminId) {
+  try {
+    const res = await getData(`api/admin/all-payments?admin_id=${adminId}`);
+    return Array.isArray(res) ? res : [];
+  } catch (err) {
+    console.error("Error fetching all payments:", err);
+    return [];
+  }
+}
+
+// Admin - Get all bookings
+export async function getAllBookings(adminId) {
+  try {
+    const res = await getData(`api/admin/all-bookings?admin_id=${adminId}`);
+    return Array.isArray(res) ? res : [];
+  } catch (err) {
+    console.error("Error fetching all bookings:", err);
+    return [];
   }
 }

@@ -9,6 +9,7 @@ from entities.booking import Booking
 from entities.service import Service
 from entities.admin import Admin
 from entities.timeslot import TimeSlot
+from entities.payment_result import PaymentResult
 
 from services.booking_service import BookingService
 from services.availability_service import AvailabilityService
@@ -56,9 +57,22 @@ def home():
 def get_services():
     db = SessionLocal()
     try:
-        service = AvailabilityService(db)
-        services = service.browse_services()
-        return {'services': [s.name for s in services]}, 200
+        services = db.query(Service).all()
+        return [
+            {
+                'service_id': s.service_id,
+                'serviceName': s.name,
+                'name': s.name,
+                'description': s.description,
+                'duration': s.duration,
+                'price': s.price,
+                'consultant_id': s.consultant_id
+            }
+            for s in services
+        ], 200
+    except Exception as e:
+        print(f"Error fetching services: {e}")
+        return {'error': str(e)}, 500
     finally:
         db.close()
 
@@ -190,23 +204,143 @@ def reject_booking(booking_id):
         db.close()
 
 # -------------------------
+# Create Booking (Client)
+# -------------------------
+# Create Booking (Client)
+# -------------------------
+@app.route("/api/bookings", methods=["POST"])
+def create_booking():
+    db = SessionLocal()
+    try:
+        data = request.get_json()
+        client_id = data.get("client_id")
+        consultant_id = data.get("consultant_id")
+        service_id = data.get("service_id")
+        slot_id = data.get("slot_id")
+        
+        # Validate all required fields
+        if not all([client_id, consultant_id, service_id, slot_id]):
+            return jsonify({"success": False, "message": "Missing required fields"}), 400
+        
+        # Get client
+        client = db.query(Client).filter_by(user_id=client_id).first()
+        if not client:
+            return jsonify({"success": False, "message": "Client not found"}), 404
+        
+        # Get consultant
+        consultant = db.query(Consultant).filter_by(user_id=consultant_id).first()
+        if not consultant:
+            return jsonify({"success": False, "message": "Consultant not found"}), 404
+        
+        # Get service
+        service = db.query(Service).filter_by(service_id=service_id).first()
+        if not service:
+            return jsonify({"success": False, "message": "Service not found"}), 404
+        
+        # Get timeslot
+        timeslot = db.query(TimeSlot).filter_by(slot_id=slot_id).first()
+        if not timeslot:
+            return jsonify({"success": False, "message": "Timeslot not found"}), 404
+        
+        if not timeslot.available:
+            return jsonify({"success": False, "message": "Timeslot is no longer available"}), 409
+        
+        # Create booking using BookingService
+        booking_service = BookingService(db)
+        booking = booking_service.create_booking(client, consultant, service, timeslot)
+        
+        return jsonify({
+            "success": True,
+            "message": "Booking created successfully",
+            "booking_id": booking.booking_id,
+            "state": str(booking.state)
+        }), 201
+    except Exception as e:
+        print(f"Error creating booking: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+    finally:
+        db.close()
+
+@app.route("/api/consultant/<consultant_id>/available-slots", methods=["GET"])
+def get_available_slots(consultant_id):
+    """Get available slots split by service duration if applicable"""
+    db = SessionLocal()
+    try:
+        service_id = request.args.get("service_id")
+        
+        if not service_id:
+            return jsonify({"error": "service_id parameter required"}), 400
+        
+        # Get the service to determine duration
+        service = db.query(Service).filter_by(service_id=service_id).first()
+        if not service:
+            return jsonify({"error": "Service not found"}), 404
+        
+        service_duration = service.duration  # in minutes
+        
+        # Get all available timeslots for consultant
+        timeslots = db.query(TimeSlot).filter_by(
+            consultant_id=consultant_id,
+            available=True
+        ).all()
+        
+        available_slots = []
+        
+        for slot in timeslots:
+            # Calculate slot duration in minutes
+            slot_duration = (slot.end_time - slot.start_time).total_seconds() / 60
+            
+            # If slot is larger than service duration, split it
+            if slot_duration > service_duration:
+                # Create multiple booking options
+                current_time = slot.start_time
+                while (slot.end_time - current_time).total_seconds() / 60 >= service_duration:
+                    end_time = current_time + __import__('datetime').timedelta(minutes=service_duration)
+                    available_slots.append({
+                        'slot_id': slot.slot_id,
+                        'start_time': current_time.isoformat(),
+                        'end_time': end_time.isoformat(),
+                        'available': True,
+                        'original_slot_id': slot.slot_id
+                    })
+                    current_time = end_time
+            else:
+                # Slot is exact size or smaller
+                available_slots.append({
+                    'slot_id': slot.slot_id,
+                    'start_time': slot.start_time.isoformat(),
+                    'end_time': slot.end_time.isoformat(),
+                    'available': True,
+                    'original_slot_id': slot.slot_id
+                })
+        
+        return jsonify(available_slots), 200
+    except Exception as e:
+        print(f"Error fetching available slots: {e}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        db.close()
+
+# -------------------------
 # Get Timeslots
 # -------------------------
 @app.route("/api/consultant/<consultant_id>/timeslots", methods=["GET"])
 def get_timeslots(consultant_id):
     db = SessionLocal()
     try:
-        consultant = db.query(Consultant).filter_by(user_id=consultant_id).first()
-        if not consultant:
-            return jsonify({"message": "Consultant not found"}), 404
-
+        timeslots = db.query(TimeSlot).filter_by(consultant_id=consultant_id).all()
+        
         return jsonify([
             {
                 "slot_id": ts.slot_id,
                 "start_time": ts.start_time.isoformat(),
-                "end_time": ts.end_time.isoformat()
-            } for ts in consultant.timeslots
+                "end_time": ts.end_time.isoformat(),
+                "available": ts.available if hasattr(ts, 'available') else True
+            } for ts in timeslots
         ])
+    except Exception as e:
+        print(f"Error fetching timeslots: {e}")
+        return jsonify({"error": str(e)}), 500
     finally:
         db.close()
 
@@ -223,17 +357,52 @@ def add_timeslot(consultant_id):
         if not consultant:
             return jsonify({"message": "Consultant not found"}), 404
 
+        # Parse time strings (format: "HH:MM" from HTML time input) and date (format: "YYYY-MM-DD")
+        from datetime import time as dt_time
+        try:
+            start_time_str = data.get("start_time")
+            end_time_str = data.get("end_time")
+            date_str = data.get("date")  # Optional date in YYYY-MM-DD format
+            
+            # Parse times
+            start_time_obj = datetime.strptime(start_time_str, "%H:%M").time()
+            end_time_obj = datetime.strptime(end_time_str, "%H:%M").time()
+            
+            # Use provided date or default to today
+            if date_str:
+                try:
+                    slot_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+                except ValueError:
+                    slot_date = datetime.now().date()
+            else:
+                slot_date = datetime.now().date()
+            
+            start_datetime = datetime.combine(slot_date, start_time_obj)
+            end_datetime = datetime.combine(slot_date, end_time_obj)
+            
+        except (ValueError, KeyError, TypeError) as e:
+            print(f"Error parsing time: {e}")
+            return jsonify({"error": f"Invalid time format: {e}"}), 400
+
         slot = TimeSlot(
             slot_id=f"ts{datetime.now().timestamp()}",
-            start_time=datetime.fromisoformat(data["start_time"]),
-            end_time=datetime.fromisoformat(data["end_time"])
+            start_time=start_datetime,
+            end_time=end_datetime,
+            consultant_id=consultant_id
         )
 
-        consultant.timeslots.append(slot)
         db.add(slot)
         db.commit()
 
-        return jsonify({"message": "Timeslot added"}), 201
+        return jsonify({
+            "slot_id": slot.slot_id,
+            "start_time": slot.start_time.isoformat(),
+            "end_time": slot.end_time.isoformat(),
+            "available": True
+        }), 201
+    except Exception as e:
+        print(f"Error adding timeslot: {e}")
+        return jsonify({"error": str(e)}), 500
     finally:
         db.close()
 
@@ -267,11 +436,15 @@ def get_consultant_services(consultant_id):
         return jsonify([
             {
                 "service_id": s.service_id,
-                "serviceName": s.serviceName,
+                "name": s.name,
+                "serviceName": s.name,
                 "duration": s.duration,
                 "price": s.price
             } for s in services
         ])
+    except Exception as e:
+        print(f"Error fetching consultant services: {e}")
+        return jsonify({"error": str(e)}), 500
     finally:
         db.close()
 
@@ -284,18 +457,31 @@ def add_service(consultant_id):
     try:
         data = request.get_json()
 
+        consultant = db.query(Consultant).filter_by(user_id=consultant_id).first()
+        if not consultant:
+            return jsonify({"message": "Consultant not found"}), 404
+
         service = Service(
             service_id=f"s{datetime.now().timestamp()}",
             serviceName=data["serviceName"],
             duration=data["duration"],
             price=data["price"],
-            consultant_id=consultant_id
+            consultant=consultant
         )
 
         db.add(service)
         db.commit()
 
-        return jsonify({"message": "Service added"}), 201
+        return jsonify({
+            "service_id": service.service_id,
+            "serviceName": service.name,
+            "duration": service.duration,
+            "price": service.price,
+            "consultant_id": service.consultant_id
+        }), 201
+    except Exception as e:
+        print(f"Error adding service: {e}")
+        return jsonify({"error": str(e)}), 500
     finally:
         db.close()
 
@@ -502,6 +688,173 @@ def client_signup():
                 "success": True,
                 "message": "Client registered successfully."
             }), 201
+    finally:
+        db.close()
+
+# -------------------------
+# Client Bookings
+# -------------------------
+@app.route("/api/client/<client_id>/bookings", methods=["GET"])
+def get_client_bookings(client_id):
+    db = SessionLocal()
+    try:
+        client = db.query(Client).filter_by(user_id=client_id).first()
+        if not client:
+            return jsonify({"success": False, "message": "Client not found"}), 404
+
+        bookings_list = []
+        for booking in client.bookings:
+            bookings_list.append({
+                'booking_id': booking.booking_id,
+                'service_id': booking.service_id,
+                'consultant_id': booking.consultant_id,
+                'state': str(booking.get_state()),
+                'created_at': booking.created_at.isoformat() if booking.created_at else None,
+                'timeslot_id': booking.timeslot_id
+            })
+        
+        return jsonify(bookings_list), 200
+    except Exception as e:
+        print(f"Error fetching client bookings: {e}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        db.close()
+
+# -------------------------
+# Client Payments
+# -------------------------
+@app.route("/api/client/<client_id>/payments", methods=["GET"])
+def get_client_payments(client_id):
+    db = SessionLocal()
+    try:
+        client = db.query(Client).filter_by(user_id=client_id).first()
+        if not client:
+            return jsonify({"success": False, "message": "Client not found"}), 404
+
+        payments_list = []
+        
+        # Get all bookings for this client
+        for booking in client.bookings:
+            # Get payment history for this booking
+            if booking.payment_history:
+                for payment in booking.payment_history:
+                    payments_list.append({
+                        'payment_id': payment.user_id,
+                        'booking_id': payment.booking_id,
+                        'amount': payment.amount,
+                        'status': 'COMPLETED' if payment.success else 'FAILED',
+                        'created_at': payment.timestamp.isoformat() if payment.timestamp else None
+                    })
+        
+        return jsonify(payments_list), 200
+    except Exception as e:
+        print(f"Error fetching client payments: {e}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        db.close()
+
+# -------------------------
+# Cancel Booking
+# -------------------------
+@app.route("/api/bookings/<booking_id>/cancel", methods=["POST"])
+def cancel_booking(booking_id):
+    db = SessionLocal()
+    try:
+        booking = db.query(Booking).filter_by(booking_id=booking_id).first()
+        if not booking:
+            return jsonify({"success": False, "message": "Booking not found"}), 404
+        
+        # Get current state and try to cancel
+        current_state = booking.get_state()
+        
+        # You can only cancel if not already cancelled or completed
+        if str(current_state) == "CANCELLED" or str(current_state) == "COMPLETED":
+            return jsonify({
+                "success": False,
+                "message": f"Cannot cancel a booking in {current_state} state"
+            }), 400
+        
+        # Request cancellation (this will trigger state transition)
+        booking.request_cancellation()
+        db.commit()
+        
+        return jsonify({
+            "success": True,
+            "message": "Booking cancelled successfully"
+        }), 200
+    except Exception as e:
+        print(f"Error cancelling booking: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+    finally:
+        db.close()
+
+# -------------------------
+# Admin - All Payments
+# -------------------------
+@app.route("/api/admin/all-payments", methods=["GET"])
+def get_all_payments():
+    db = SessionLocal()
+    try:
+        admin_id = request.args.get("admin_id")
+        
+        # Verify admin exists
+        admin = db.query(Admin).filter_by(user_id=admin_id).first()
+        if not admin:
+            return jsonify({"success": False, "message": "Admin not found"}), 404
+        
+        # Get all payment results
+        all_payments = db.query(PaymentResult).all()
+        
+        payments_list = []
+        for payment in all_payments:
+            payments_list.append({
+                'payment_id': payment.user_id if payment.user_id else str(payment.timestamp),
+                'booking_id': payment.booking_id,
+                'amount': float(payment.amount) if payment.amount else 0,
+                'status': 'COMPLETED' if payment.success else 'FAILED',
+                'timestamp': payment.timestamp.isoformat() if payment.timestamp else None
+            })
+        
+        return jsonify(payments_list), 200
+    except Exception as e:
+        print(f"Error fetching all payments: {e}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        db.close()
+
+# -------------------------
+# Admin - All Bookings
+# -------------------------
+@app.route("/api/admin/all-bookings", methods=["GET"])
+def get_all_bookings():
+    db = SessionLocal()
+    try:
+        admin_id = request.args.get("admin_id")
+        
+        # Verify admin exists
+        admin = db.query(Admin).filter_by(user_id=admin_id).first()
+        if not admin:
+            return jsonify({"success": False, "message": "Admin not found"}), 404
+        
+        # Get all bookings
+        all_bookings = db.query(Booking).all()
+        
+        bookings_list = []
+        for booking in all_bookings:
+            bookings_list.append({
+                'booking_id': booking.booking_id,
+                'client_id': booking.client_id,
+                'consultant_id': booking.consultant_id,
+                'service_id': booking.service_id,
+                'timeslot_id': booking.timeslot_id,
+                'state': str(booking.get_state()),
+                'created_at': booking.created_at.isoformat() if booking.created_at else None
+            })
+        
+        return jsonify(bookings_list), 200
+    except Exception as e:
+        print(f"Error fetching all bookings: {e}")
+        return jsonify({"error": str(e)}), 500
     finally:
         db.close()
 

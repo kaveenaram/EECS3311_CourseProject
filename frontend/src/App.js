@@ -14,6 +14,7 @@ import ClientDashboard from './pages/ClientDashboard';
 import BrowseServicesPage from './pages/BrowseServicesPage';
 import BookingHistoryPage from './pages/BookingHistoryPage';
 import PaymentPage from './pages/PaymentPage';
+import PaymentManagement from './pages/PaymentManagement';
 
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
@@ -36,6 +37,7 @@ function App() {
         <Route path="/services" element={<BrowseServicesPage />} />
         <Route path="/bookings" element={<BookingHistoryPage />} />
         <Route path="/payments" element={<PaymentPage />} />
+        <Route path="/payment-management" element={<PaymentManagement />} />
 
         {/* Consultant */}
         <Route path="/consultant-login" element={<ConsultantLoginWrapper />} />

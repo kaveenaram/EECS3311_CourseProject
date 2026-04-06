@@ -10,20 +10,26 @@ export default function ConsultantDashboard() {
   const navigate = useNavigate();
   const consultantId = localStorage.getItem("consultant_id") || "consultant1"; // Get logged-in consultant ID
 
-  useEffect(() => {
-    async function fetchBookings() {
-      try {
-        const data = await getConsultantBookings(consultantId);
-        console.log("Fetched bookings:", data); // check what comes here in testing 
-        setBookings(data);
-        setLoading(false);
-      } catch (err) {
-        console.error(err);
-        setLoading(false);
-      }
+  async function fetchBookings() {
+    try {
+      const data = await getConsultantBookings(consultantId);
+      console.log("Fetched bookings:", data); // check what comes here in testing 
+      setBookings(data);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
     }
+  }
+
+  useEffect(() => {
     fetchBookings();
   }, [consultantId]);
+
+  async function handleRefresh() {
+    setLoading(true);
+    await fetchBookings();
+  }
 
   async function handleAccept(bookingId) {
   try {
@@ -64,7 +70,20 @@ async function handleReject(bookingId) {
 
   return (
     <div className="consultant-dashboard container mt-4">
-      <h1 className="text-center mb-4">Consultant Dashboard</h1>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h1>Consultant Dashboard</h1>
+        <div>
+          <button 
+            className="btn btn-warning me-2" 
+            onClick={handleRefresh}
+          >
+            Refresh
+          </button>
+          <button className="btn btn-secondary" onClick={() => navigate("/")}>
+            Back
+          </button>
+        </div>
+      </div>
 
       <div className="mb-3 text-center">
         <button

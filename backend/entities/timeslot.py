@@ -19,9 +19,10 @@ class TimeSlot(Base):
     consultant = relationship("Consultant", back_populates="timeslots")
     bookings = relationship("Booking", back_populates="timeslot")
 
-  # TimeSlot constructor initializes slot ID, start time, end time, and availability status
-    def __init__(self, slot_id: str, start_time: str, end_time: str):
+  # TimeSlot constructor initializes slot ID, consultant ID, start time, end time, and availability status
+    def __init__(self, slot_id: str, start_time, end_time, consultant_id: str = None):
       self.slot_id = slot_id
+      self.consultant_id = consultant_id
       self.start_time = start_time
       self.end_time = end_time
       self.available = True
