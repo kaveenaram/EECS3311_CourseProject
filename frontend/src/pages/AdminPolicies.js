@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getPolicies, updatePolicies } from "../services/api";
 
 export default function AdminPolicies() {
   const navigate = useNavigate();
+  const adminId = localStorage.getItem("admin_id") || "admin1";
   const [policies, setPolicies] = useState({
     cancellationRules: "",
     pricingStrategy: "",
@@ -12,29 +14,31 @@ export default function AdminPolicies() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/admin/get-policies")
-      .then(res => res.json())
-      .then(data => {
-        setPolicies(data);
+    async function fetchPolicies() {
+      try {
+        const data = await getPolicies(adminId);
+        setPolicies({
+          cancellationRules: data.cancellation_rules || "",
+          pricingStrategy: data.pricing_strategy || "",
+          refundPolicy: data.refund_policy || ""
+        });
         setLoading(false);
-      })
-      .catch(err => console.error(err));
-  }, []);
+      } catch (err) {
+        console.error(err);
+        setLoading(false);
+      }
+    }
+    fetchPolicies();
+  }, [adminId]);
 
-  async function updatePolicies(e) {
+  async function handleUpdatePolicies(e) {
     e.preventDefault();
 
     try {
-      await fetch("http://localhost:5000/api/admin/update-policy", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          cancellation_rules: policies.cancellationRules,
-          pricing_strategy: policies.pricingStrategy,
-          refund_policy: policies.refundPolicy
-        })
-      });
-      alert("Policies updated!");
+      const result = await updatePolicies(adminId, policies);
+      if (result.success) {
+        alert("Policies updated!");
+      }
     } catch (err) {
       console.error(err);
     }
@@ -62,7 +66,7 @@ export default function AdminPolicies() {
         </button>
       </div>
 
-      <form onSubmit={updatePolicies}>
+      <form onSubmit={handleUpdatePolicies}>
         <div className="mb-3">
           <label className="form-label">Cancellation Rules</label>
           <textarea

@@ -1,33 +1,31 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getConsultants, approveConsultant } from "../services/api";
 import "./AdminDashboard.css";
 
 export default function AdminDashboard() {
   const [consultants, setConsultants] = useState([]);
   const [loading, setLoading] = useState(true);
+  const adminId = localStorage.getItem("admin_id") || "admin1"; // Get logged-in admin ID
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/admin/consultants")
-      .then(res => res.json())
-      .then(data => {
-        setConsultants(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
-        setLoading(false);
-      });
+    async function fetchConsultants() {
+      const data = await getConsultants();
+      setConsultants(data);
+      setLoading(false);
+    }
+    fetchConsultants();
   }, []);
 
-  async function approveConsultant(id) {
+  async function handleApprove(id) {
     try {
-      await fetch(`http://localhost:5000/api/admin/approve/${id}`, {
-        method: "POST"
-      });
-      setConsultants(prev =>
-        prev.map(c => (c.user_id === id ? { ...c, approved: true } : c))
-      );
+      const res = await approveConsultant(id, adminId);
+      if (res.success) {
+        setConsultants(prev =>
+          prev.map(c => (c.user_id === id ? { ...c, approved: true } : c))
+        );
+      }
     } catch (err) {
       console.error(err);
     }
@@ -66,7 +64,7 @@ export default function AdminDashboard() {
                   {!c.approved && (
                     <button
                       className="btn btn-success btn-sm"
-                      onClick={() => approveConsultant(c.user_id)}
+                      onClick={() => handleApprove(c.user_id)}
                     >
                       Approve
                     </button>

@@ -34,6 +34,9 @@ export async function loginConsultant(userId, password) {
     const res = await postData("api/consultant/login", { user_id: userId, password });
     //console.log("Raw login response:", res); // <--- used for testing 
     if (res.success) {
+      // Store consultant_id in localStorage for use in dashboard
+      localStorage.setItem("consultant_id", res.consultant_id);
+      localStorage.setItem("user_type", "consultant");
       return { 
         success: true, 
         consultant: { id: res.consultant_id, name: res.name } 
@@ -116,6 +119,9 @@ export async function loginAdmin(userId, password) {
   try {
     const res = await postData("api/admin/login", { user_id: userId, password });
     if (res.success) {
+      // Store admin_id in localStorage for use in dashboard
+      localStorage.setItem("admin_id", res.admin_id);
+      localStorage.setItem("user_type", "admin");
       return { 
         success: true, 
         admin: { id: res.admin_id, name: res.name } 
@@ -134,6 +140,9 @@ export async function loginClient(userId, password) {
   try {
     const res = await postData("api/client/login", { user_id: userId, password });
     if (res.success) {
+      // Store client_id in localStorage for use in dashboard
+      localStorage.setItem("client_id", res.client_id);
+      localStorage.setItem("user_type", "client");
       return { 
         success: true, 
         client: { id: res.client_id, name: res.name } 
@@ -155,5 +164,120 @@ export async function signupClient(userData) {
   } catch (err) {
     console.error("Client signup error:", err);
     return { success: false, message: "Network error" };
+  }
+}
+
+// Get all consultants (admin)
+export async function getConsultants() {
+  try {
+    const res = await getData("api/admin/consultants");
+    return res || [];
+  } catch (err) {
+    console.error("Error fetching consultants:", err);
+    return [];
+  }
+}
+
+// Approve consultant (admin)
+export async function approveConsultant(consultantId, adminId) {
+  try {
+    const res = await postData(`api/admin/approve/${consultantId}`, { admin_id: adminId });
+    return res;
+  } catch (err) {
+    console.error("Error approving consultant:", err);
+    return { success: false };
+  }
+}
+
+// Get policies (admin)
+export async function getPolicies(adminId) {
+  try {
+    const res = await getData(`api/admin/get-policies?admin_id=${adminId}`);
+    return res || {};
+  } catch (err) {
+    console.error("Error fetching policies:", err);
+    return {};
+  }
+}
+
+// Update policies (admin)
+export async function updatePolicies(adminId, policies) {
+  try {
+    const res = await postData("api/admin/update-policy", {
+      admin_id: adminId,
+      cancellation_rules: policies.cancellationRules,
+      pricing_strategy: policies.pricingStrategy,
+      refund_policy: policies.refundPolicy
+    });
+    return res;
+  } catch (err) {
+    console.error("Error updating policies:", err);
+    return { success: false };
+  }
+}
+
+// Client Services - Browse and Book
+export async function getServices() {
+  try {
+    const res = await getData("api/services");
+    return res || [];
+  } catch (err) {
+    console.error("Error fetching services:", err);
+    return [];
+  }
+}
+
+export async function getTimeslots(consultantId) {
+  try {
+    const res = await getData(`api/consultant/${consultantId}/timeslots`);
+    return res || [];
+  } catch (err) {
+    console.error("Error fetching timeslots:", err);
+    return [];
+  }
+}
+
+export async function bookService(bookingData) {
+  try {
+    const res = await postData("api/bookings", {
+      client_id: bookingData.client_id,
+      consultant_id: bookingData.consultant_id,
+      service_id: bookingData.service_id,
+      slot_id: bookingData.slot_id
+    });
+    return res;
+  } catch (err) {
+    console.error("Error booking service:", err);
+    return { success: false };
+  }
+}
+
+export async function getClientBookings(clientId) {
+  try {
+    const res = await getData(`api/client/${clientId}/bookings`);
+    return res || [];
+  } catch (err) {
+    console.error("Error fetching client bookings:", err);
+    return [];
+  }
+}
+
+export async function getPayments(clientId) {
+  try {
+    const res = await getData(`api/client/${clientId}/payments`);
+    return res || [];
+  } catch (err) {
+    console.error("Error fetching payments:", err);
+    return [];
+  }
+}
+
+export async function cancelBooking(bookingId) {
+  try {
+    const res = await postData(`api/bookings/${bookingId}/cancel`);
+    return res;
+  } catch (err) {
+    console.error("Error cancelling booking:", err);
+    return { success: false };
   }
 }

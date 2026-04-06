@@ -7,25 +7,26 @@ export default function ManageTimeslots() {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const navigate = useNavigate();
+  const consultantId = localStorage.getItem("consultant_id") || "consultant1";
 
   useEffect(() => {
     async function fetchTimeslots() {
-      const data = await getConsultantTimeslots("consultant1");
+      const data = await getConsultantTimeslots(consultantId);
       setTimeslots(data);
     }
     fetchTimeslots();
-  }, []);
+  }, [consultantId]);
 
   const handleAdd = async () => {
     if (!startTime || !endTime) return;
-    const newSlot = await addTimeslot("consultant1", { start_time: startTime, end_time: endTime });
+    const newSlot = await addTimeslot(consultantId, { start_time: startTime, end_time: endTime });
     setTimeslots([...timeslots, newSlot]);
     setStartTime("");
     setEndTime("");
   };
 
   const handleDelete = async (slotId) => {
-    await deleteTimeslot("consultant1", slotId);
+    await deleteTimeslot(consultantId, slotId);
     setTimeslots(timeslots.filter((s) => s.slot_id !== slotId));
   };
 

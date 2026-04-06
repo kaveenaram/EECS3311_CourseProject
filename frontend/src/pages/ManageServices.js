@@ -8,18 +8,19 @@ export default function ManageServices() {
   const [duration, setDuration] = useState("");
   const [price, setPrice] = useState("");
   const navigate = useNavigate();
+  const consultantId = localStorage.getItem("consultant_id") || "consultant1";
 
   useEffect(() => {
     async function fetchServices() {
-      const data = await getConsultantServices("consultant1");
+      const data = await getConsultantServices(consultantId);
       setServices(data);
     }
     fetchServices();
-  }, []);
+  }, [consultantId]);
 
   const handleAdd = async () => {
     if (!name || !duration || !price) return;
-    const newService = await addService("consultant1", {
+    const newService = await addService(consultantId, {
       serviceName: name,
       duration: parseInt(duration),
       price: parseFloat(price),
@@ -31,7 +32,7 @@ export default function ManageServices() {
   };
 
   const handleDelete = async (serviceId) => {
-    await deleteService("consultant1", serviceId);
+    await deleteService(consultantId, serviceId);
     setServices(services.filter((s) => s.service_id !== serviceId));
   };
 

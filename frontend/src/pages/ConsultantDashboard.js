@@ -8,11 +8,12 @@ export default function ConsultantDashboard() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const consultantId = localStorage.getItem("consultant_id") || "consultant1"; // Get logged-in consultant ID
 
   useEffect(() => {
     async function fetchBookings() {
       try {
-        const data = await getConsultantBookings("consultant1"); // hardcoded
+        const data = await getConsultantBookings(consultantId);
         console.log("Fetched bookings:", data); // check what comes here in testing 
         setBookings(data);
         setLoading(false);
@@ -22,7 +23,7 @@ export default function ConsultantDashboard() {
       }
     }
     fetchBookings();
-  }, []);
+  }, [consultantId]);
 
   async function handleAccept(bookingId) {
   try {

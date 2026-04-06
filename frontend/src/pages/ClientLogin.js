@@ -12,7 +12,6 @@ function ClientLogin() {
     const res = await loginClient(user_id, password);
 
     if (res.success) {
-      localStorage.setItem("client_id", user_id);
       navigate("/client-dashboard");
     } else {
       alert("Invalid login");
