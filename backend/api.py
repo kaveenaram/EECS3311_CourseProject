@@ -109,29 +109,16 @@ def consultant_signup():
         email = data.get("email")
         password = data.get("password")
 
-<<<<<<< HEAD
-        # Check if already exists
-        if user_id in users:
-=======
         existing = db.query(Consultant).filter_by(user_id=user_id).first()
         if existing:
->>>>>>> origin
             return jsonify({
                 "success": False,
                 "message": "User ID already exists"
             }), 400
 
-<<<<<<< HEAD
-        # Create new consultant (approved = False by default)
-        consultant = Consultant(user_id, name, email, password)
-        users[user_id] = consultant
-
-        print(f"New consultant created: {consultant}")
-=======
         consultant = Consultant(user_id, name, email, password)
         db.add(consultant)
         db.commit()
->>>>>>> origin
 
         return jsonify({
                 "success": True,
