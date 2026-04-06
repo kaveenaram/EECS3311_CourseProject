@@ -6,7 +6,7 @@ import os
 import time
 from sqlalchemy.exc import OperationalError
 
-DATABASE_URL = os.getenv("DATABASE_URL", "mysql+pymysql://admin-3311:Team9courseproject@db:3306/Team9-ConsultingService") # put database URL here
+DATABASE_URL = os.getenv("DATABASE_URL", "mysql+pymysql://admin-3311:Team9courseproject@eecs3311.database.windows.net/Team9-ConsultingService") # put database URL here
 
 engine = create_engine(DATABASE_URL, echo=True) # echo=True for logging SQL queries, set to False in production
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

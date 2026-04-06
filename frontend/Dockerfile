@@ -11,7 +11,9 @@ RUN npm install
 # Copy frontend code
 COPY frontend/ ./
 
-# Build for production
+# Build for production with env vars
+ARG REACT_APP_API_URL=http://backend:5000
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
 RUN npm run build
 
 # Use serve to run the built app
