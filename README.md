@@ -187,7 +187,7 @@ This route is not exposed through the main application navigation. As a result, 
   Ai-Based Customer Assistant
   - Integrated the AI assistant through a secure backend service (no direct client‑side API calls).
   - Ensured the chatbot is fully connected to the backend and that end‑to‑end communication works reliably.
-  - Made the chatbot accessible from the fronend and ensured all messages route through the backend.
+  - Made the chatbot accessible from the frontend and ensured all messages route through the backend.
   - Restricted AI inputs to general platform information and aggregated, non‑personal data.
   - Ensured AI responses remain helpful and informational without performing automated actions.
   - Followed strict privacy and safety guidelines so the AI never receives sensitive data such as user details, payments, or booking information.
