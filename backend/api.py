@@ -25,15 +25,15 @@ CORS(app)
 # database initialization 
 # -------------------------
 
+admin_created = False
+
 @app.before_request
 def startup():
+    global admin_created
     init_db()
-
-# -------------------------
-# create superadmin
-# -------------------------
-
-create_superadmin()
+    if not admin_created:
+        create_superadmin()
+        admin_created = True
 
 # -------------------------
 # Health Check

@@ -3,13 +3,13 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Copy package files
-COPY frontend/package.json frontend/package-lock.json* ./
+COPY package.json package-lock.json* ./
 
 # Install dependencies
 RUN npm install
 
 # Copy frontend code
-COPY frontend/ ./
+COPY . ./
 
 # Build for production with env vars
 ARG REACT_APP_API_URL=http://backend:5000
