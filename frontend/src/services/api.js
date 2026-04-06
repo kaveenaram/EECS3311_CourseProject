@@ -1,4 +1,4 @@
-const BASE_URL = process.env.REACT_APP_API_URL || "http://backend:5000";
+const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5001";
 
 // Test connection
 export async function testConnection() {
