@@ -51,8 +51,11 @@ if __name__ == '__main__':
 # necessary dependancies 
 # -------------------------
 
-# call db = SessionLocal() every time you need a db session and then close it when done (try/finally or with statement)
-# initalize services with db session when needed (e.g. booking_service = BookingService(db))
+db = SessionLocal()
+availability_service = AvailabilityService(db)
+booking_service = BookingService(db)
+system_policy = SystemPolicy(db)
+notifier = NotificationService(db)
 
 # -------------------------
 # create superadmin
@@ -123,7 +126,7 @@ def home():
     return "API is running"
 
 # -------------------------
-# load admins
+# load admin
 # -------------------------
 def load_admins():
     db = SessionLocal()
@@ -208,50 +211,33 @@ def consultant_signup():
     
 @app.route("/api/bookings/<booking_id>/confirm", methods=["POST"])
 def confirm_booking(booking_id):
-    db = SessionLocal()
-    booking_service = BookingService(db)
-    try:
-        booking = db.query(Booking).filter_by(booking_id=booking_id).first()
-        if not booking:
-            return jsonify({"message": "Booking not found"}), 404
-        booking_service.confirm_booking(booking)
-        db.commit()
-        return jsonify({"message": "Booking confirmed"}), 200
-    finally:
-        db.close()
+    booking = booking_service.get_booking(booking_id)
+    booking_service.confirm_booking(booking)
     return {"message": "Booking confirmed"}
 
 @app.route("/api/bookings/<booking_id>/reject", methods=["POST"])
 def reject_booking(booking_id):
-    db = SessionLocal()
-    try:
-        booking_service = BookingService(db)
-        booking = db.query(Booking).filter_by(booking_id=booking_id).first()
-        if not booking:
-            return jsonify({"message": "Booking not found"}), 404
-        booking_service.reject_booking(booking)
-        db.commit()
-        return jsonify({"message": "Booking rejected"}), 200
-    finally:
-        db.close()
+    booking = booking_service.get_booking(booking_id)
+    booking_service.reject_booking(booking)
+    return {"message": "Booking rejected"}
 
 # -------------------------
 # get all consultants for admin 
 # -------------------------
 @app.route("/api/admin/consultants", methods=["GET"])
 def get_consultants():
-    db = SessionLocal()
-    try:
-        consultants = db.query(Consultant).all()
-        consultants_list = [{
-            "user_id": c.user_id,
-            "name": c.name,
-            "email": c.email,
-            "approved": c.approved
-        } for c in consultants]
-        return jsonify(consultants_list), 200
-    finally:
-        db.close()
+    consultants_list = []
+
+    for u in users.values():
+        if isinstance(u, Consultant):
+            consultants_list.append({
+                "user_id": u.user_id,
+                "name": u.name,
+                "email": u.email,
+                "approved": u.approved
+            })
+
+    return jsonify(consultants_list)
 
 # -------------------------
 #approve consultant endpoint
@@ -259,90 +245,78 @@ def get_consultants():
  
 @app.route("/api/admin/approve/<consultant_id>", methods=["POST"])
 def approve_consultant(consultant_id):
-    db = SessionLocal()
-    try:
-        consultant = db.query(Consultant).filter_by(user_id=consultant_id).first()
-        if not consultant:
-            return jsonify({"success": False, "message": "Consultant not found"}), 404
-        consultant.approved = True
-        db.commit()
-        return jsonify({"success": True, "message": f"Consultant {consultant.name} approved"}), 200
-    finally:
-        db.close()
+    admin = admins.get("admin1")  # simple for now
+    consultant = users.get(consultant_id)
+
+    if not consultant:
+        return jsonify({"success": False, "message": "Consultant not found"}), 404
+
+    admin.approveConsultant(consultant)
+
+    return jsonify({
+        "success": True,
+        "message": f"{consultant.name} approved"
+    })
 
 # -------------------------
 # get booking
 # -------------------------
 
+
 @app.route("/api/consultant/<consultant_id>/bookings", methods=["GET"])
 def get_bookings(consultant_id):
-    db = SessionLocal()
-    try:
-        consultant = db.query(Consultant).filter_by(user_id=consultant_id).first()
-        if not consultant:
-            return jsonify({"success": False, "message": "Consultant not found"}), 404
-        
-        bookings_list = []
-        for booking in consultant.bookings:
-            bookings_list.append({
-                "booking_id": booking.booking_id,
-                "client_name": booking.client.name,
-                "service_name": booking.service.serviceName,
-                "start_time": booking.timeslot.start_time.isoformat(),
-                "end_time": booking.timeslot.end_time.isoformat(),
-                "state": str(booking.get_state())
+    consultant = users.get(consultant_id)
+    if not consultant:
+        return jsonify({"success": False, "message": "Consultant not found"}), 404
+
+    bookings_list = []
+    for booking in consultant.bookings:
+        bookings_list.append({
+            "booking_id": booking.booking_id,
+            "client_name": booking.client.name,
+            "service_name": booking.service.serviceName,
+            "start_time": booking.timeslot.start_time.isoformat(),
+            "end_time": booking.timeslot.end_time.isoformat(),
+            "state": str(booking.get_state())
         })
-        return jsonify(bookings_list), 200
-    finally:
-        db.close()
+    return jsonify(bookings_list)
 
 # -------------------------
 #admin login endpoint 
 # -------------------------
 
+
 @app.route("/api/admin/login", methods=["POST"])
 def admin_login():
-    db = SessionLocal()
-    try: 
-        data = request.get_json(force=True)
-        user_id = data.get("user_id")
-        password = data.get("password")
+    data = request.get_json(force=True)
+    user_id = data.get("user_id")
+    password = data.get("password")
 
-        admin = db.query(Admin).filter_by(user_id=user_id).first()
+    admin = admins.get(user_id)
 
-        if not admin:
-            return jsonify({"success": False, "message": "Admin not found"}), 404
+    if not admin:
+        return jsonify({"success": False, "message": "Admin not found"}), 404
 
-        if admin.logIn(password):
-            return jsonify({
-                "success": True,
-                "admin_id": admin.user_id,
-                "name": admin.name
-            }), 200
+    if admin.logIn(password):
+        return jsonify({
+            "success": True,
+            "admin_id": admin.user_id,
+            "name": admin.name
+        })
 
-        return jsonify({"success": False, "message": "Invalid password"}), 401
-    finally:
-        db.close()
-
+    return jsonify({"success": False, "message": "Invalid password"}), 401
 # -------------------------
 #get policies for admin
 # -------------------------
 
 @app.route("/api/admin/get-policies", methods=["GET"])
 def get_policies():
-    db = SessionLocal()
-    try:
-        admin = db.query(Admin).filter_by(user_id="admin1").first()
-        if not admin:
-            return jsonify({"success": False, "message": "Admin not found"}), 404
-        
-        return jsonify({
-            "cancellationRules": admin.system_policy.cancellationRules,
-            "pricingStrategy": admin.system_policy.pricingStrategy,
-            "refundPolicy": admin.system_policy.refundPolicy
-        }), 200
-    finally:
-        db.close()
+    admin = admins.get("admin1")
+    return jsonify({
+        "cancellationRules": admin.system_policy.cancellationRules,
+        "pricingStrategy": admin.system_policy.pricingStrategy,
+        "refundPolicy": admin.system_policy.refundPolicy
+    })
 
 # -------------------------
 #admin update policy 
@@ -350,41 +324,31 @@ def get_policies():
 
 @app.route("/api/admin/update-policy", methods=["POST"])
 def update_policy():
-    db = SessionLocal()
-    try:
-        data = request.get_json(force=True)
-        admin = db.query(Admin).filter_by(user_id="admin1").first()
-        if not admin:
-            return jsonify({"success": False, "message": "Admin not found"}), 404
-        
-        admin.updatePolicies(
-            cancellation_rules=data.get("cancellation_rules"),
-            pricing_strategy=data.get("pricing_strategy"),
-            refund_policy=data.get("refund_policy")
-        )
+    data = request.get_json(force=True)
 
-        # Debug print (VERY useful)
-        print("Updated Policies:")
-        print("Cancellation:", admin.system_policy.cancellationRules)
-        print("Pricing:", admin.system_policy.pricingStrategy)
-        print("Refund:", admin.system_policy.refundPolicy)
+    admin = admins.get("admin1")
 
-        return jsonify({
-            "success": True,
-            "message": "Policies updated",
-            "policies": {
-                "cancellationRules": admin.system_policy.cancellationRules,
-                "pricingStrategy": admin.system_policy.pricingStrategy,
-                "refundPolicy": admin.system_policy.refundPolicy
-            }
-        }), 200
-    finally:
-        db.close()
-        
-# -------------------------
-# AI Chat Endpoint
-# -------------------------
+    admin.updatePolicies(
+        cancellation_rules=data.get("cancellation_rules"),
+        pricing_strategy=data.get("pricing_strategy"),
+        refund_policy=data.get("refund_policy")
+    )
 
+    # Debug print (VERY useful)
+    print("Updated Policies:")
+    print("Cancellation:", admin.system_policy.cancellationRules)
+    print("Pricing:", admin.system_policy.pricingStrategy)
+    print("Refund:", admin.system_policy.refundPolicy)
+
+    return jsonify({
+        "success": True,
+        "message": "Policies updated",
+        "policies": {
+            "cancellationRules": admin.system_policy.cancellationRules,
+            "pricingStrategy": admin.system_policy.pricingStrategy,
+            "refundPolicy": admin.system_policy.refundPolicy
+        }
+    })
 @app.route("/api/chat", methods=["POST"])
 def chat_with_ai():
     data = request.get_json(force=True)
@@ -394,8 +358,7 @@ def chat_with_ai():
         return jsonify({"error": "Message is required"}), 400
 
     reply = ask_ai(user_message)
-    return jsonify({"reply": reply}), 200
-
+    return jsonify({"reply": reply})
 # -------------------------
 # Run server
 # -------------------------
