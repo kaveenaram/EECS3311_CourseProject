@@ -70,7 +70,7 @@ Use Cases Covered:
 
 
 
-### How to access the AI Customer Assistant chatbot
+##  How to access the AI Customer Assistant chatbot
 ### Prerequisites:
 Node.js (for the frontend)
 Python 3 (for the backend)
