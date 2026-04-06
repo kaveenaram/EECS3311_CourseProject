@@ -127,6 +127,7 @@ paste the above API key in the appropriate field like this: GROQ_API_KEY=<<key>>
   - Connected the AI Customer Assistant to the frontend interface, enabling users to access the chatbot directly within the application.
 
 ### Meleena Subasinghe
+  Ai-Based Customer Assistant
   - Integrated the AI assistant through a secure backend service (no direct client‑side API calls).
   - Ensured the chatbot is fully connected to the backend and that end‑to‑end communication works reliably.
   - Made the chatbot accessible from the fronend and ensured all messages route through the backend.
