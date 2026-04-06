@@ -63,3 +63,28 @@ Use Cases Covered:
 Use Cases Covered:
 - UC11 Approve Consultant
 - UC12 Define Policies
+
+# Team9_Phase2 EECS-3311 Course Project
+
+###• How to build and run with Docker
+
+
+
+###• How to access the AI Customer Assistant chatbot
+
+
+
+
+###• Any API keys or configuration needed
+
+
+
+###• GitHub repository URL (same as Phase 1)
+  - https://github.com/kaveenaram/EECS3311_CourseProject/tree/main
+
+## - Team Contributions
+
+### Kaveena Ramkissoon
+### Dulja Ranathunga
+### Ha An Do
+### Meleena Subasinghe
