@@ -4,6 +4,7 @@ from database.db import SessionLocal, init_db
 from services.booking_service import BookingService
 from services.availability_service import AvailabilityService
 from services.payment_service import PaymentService
+from database.create_superadmin import create_superadmin
 
 from entities.consultant import Consultant
 from entities.client import Client
@@ -57,6 +58,12 @@ system_policy = SystemPolicy(db)
 notifier = NotificationService(db)
 
 # -------------------------
+# create superadmin
+# -------------------------
+
+create_superadmin()
+
+# -------------------------
 # In-memory "database"
 # -------------------------
 users = {
@@ -66,10 +73,6 @@ users = {
 clients = {
     "client1": Client("client1", "Bob", "bob@mail.com", "pass"),
     "client2": Client("client2", "Charlie", "charlie@mail.com", "pass")
-}
-
-admins = {
-    "admin1": Admin("admin1", "SuperAdmin", "admin@mail.com", "pass", system_policy, notifier)
 }
 
 # Sample services
@@ -121,6 +124,21 @@ users["consultant1"].approved = True
 @app.route("/")
 def home():
     return "API is running"
+
+# -------------------------
+# load admins
+# -------------------------
+def load_admins():
+    db = SessionLocal()
+    try:
+        all_admins = db.query(Admin).all()
+        admin_dict = {admin.user_id: admin for admin in all_admins}
+        return admin_dict
+    finally:
+        db.close()
+
+# Load admins at startup
+admins = load_admins()
 
 # -------------------------
 # consultant login endpoint
