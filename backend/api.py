@@ -43,58 +43,125 @@ def health():
     return {'status': 'ok'}, 200
 
 # -------------------------
-# Home
+# necessary dependancies 
+# -------------------------
+
+db = SessionLocal()
+availability_service = AvailabilityService(db)
+booking_service = BookingService(db)
+system_policy = SystemPolicy(db)
+notifier = NotificationService(db)
+
+# -------------------------
+# In-memory "database"
+# -------------------------
+users = {
+    "consultant1": Consultant("consultant1", "Alice", "alice@mail.com", "pass")
+}
+
+clients = {
+    "client1": Client("client1", "Bob", "bob@mail.com", "pass"),
+    "client2": Client("client2", "Charlie", "charlie@mail.com", "pass")
+}
+
+# Sample services
+services = {
+    "service1": Service("service1", "Consulting Session", duration=60, price=100, consultant=users["consultant1"]),
+    "service2": Service("service2", "Strategy Meeting", duration=90, price=150, consultant=users["consultant1"])
+}
+
+
+
+consultant = users["consultant1"]
+
+# -------------------------
+# Add timeslots for the consultant
+# -------------------------
+ts1 = TimeSlot("ts1", datetime.now(), datetime.now() + timedelta(hours=1))
+ts2 = TimeSlot("ts2", datetime.now() + timedelta(days=1), datetime.now() + timedelta(days=1, hours=1))
+
+consultant.timeslots.extend([ts1, ts2])
+
+# -------------------------
+# Create bookings via BookingService
+# -------------------------
+booking1 = booking_service.create_booking(
+    client=clients["client1"],
+    consultant=consultant,
+    service=services["service1"],
+    slot=ts1
+)
+
+booking2 = booking_service.create_booking(
+    client=clients["client2"],
+    consultant=consultant,
+    service=services["service2"],
+    slot=ts2
+)
+
+# -------------------------
+# Verify consultant bookings
+# -------------------------
+print("Consultant bookings:", [b.booking_id for b in consultant.bookings])
+
+# Approve consultant for demo
+users["consultant1"].approved = True
+
+# -------------------------
+# First API check
 # -------------------------
 @app.route("/")
 def home():
     return "API is running"
 
 # -------------------------
-# Get all services
+# load admin
 # -------------------------
-@app.route('/api/services', methods=['GET'])
-def get_services():
+def load_admins():
     db = SessionLocal()
     try:
-        service = AvailabilityService(db)
-        services = service.browse_services()
-        return {'services': [s.name for s in services]}, 200
+        all_admins = db.query(Admin).all()
+        admin_dict = {admin.user_id: admin for admin in all_admins}
+        return admin_dict
     finally:
         db.close()
+
+# Load admins at startup
+admins = load_admins()
 
 # -------------------------
 # Consultant login
 # -------------------------
 @app.route("/api/consultant/login", methods=["POST"])
 def consultant_login():
-    db = SessionLocal()
-    try:
-        data = request.get_json()
-        user_id = data.get("user_id")
-        password = data.get("password")
+    data = request.get_json(force=True)
+    user_id = data.get("user_id")
+    password = data.get("password")
+    consultant = users.get(user_id)
 
-        consultant = db.query(Consultant).filter_by(user_id=user_id).first()
+    if not consultant:
+        return jsonify({"success": False, "message": "Consultant not found"}), 404
 
-        if not consultant:
-            return jsonify({"success": False, "message": "Consultant not found"}), 404
+    # Check approval FIRST
+    if not consultant.approved:
+        return jsonify({
+            "success": False,
+            "message": "Consultant not approved yet"
+        }), 403
 
-        if not consultant.approved:
-            return jsonify({
-                "success": False,
-                "message": "Consultant not approved yet"
-            }), 403
+    # Then check password
+    if consultant.logIn(password):
+        return jsonify({
+            "success": True,
+            "consultant_id": consultant.user_id,
+            "name": consultant.name
+        })
 
-        if consultant.logIn(password):
-            return jsonify({
-                "success": True,
-                "consultant_id": consultant.user_id,
-                "name": consultant.name
-            }), 200
-
-        return jsonify({"success": False, "message": "Invalid password"}), 401
-    finally:
-        db.close()
-
+    return jsonify({
+        "success": False,
+        "message": "Invalid password"
+    }), 401
+    
 # -------------------------
 # Consultant Signup
 # -------------------------
@@ -109,16 +176,18 @@ def consultant_signup():
         email = data.get("email")
         password = data.get("password")
 
-        existing = db.query(Consultant).filter_by(user_id=user_id).first()
-        if existing:
-            return jsonify({
-                "success": False,
-                "message": "User ID already exists"
-            }), 400
+    # Check if already exists
+    if user_id in users:
+        return jsonify({
+            "success": False,
+            "message": "User ID already exists"
+        }), 400
 
-        consultant = Consultant(user_id, name, email, password)
-        db.add(consultant)
-        db.commit()
+    # Create new consultant (approved = False by default)
+    consultant = Consultant(user_id, name, email, password)
+    users[user_id] = consultant
+
+    print(f"New consultant created: {consultant}")
 
         return jsonify({
             "success": True,

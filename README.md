@@ -66,12 +66,12 @@ Use Cases Covered:
 
 # Team9_Phase2 EECS-3311 Course Project
 
-###• How to build and run with Docker
+##  How to build and run with Docker
 
 
 
-###• How to access the AI Customer Assistant chatbot
-####Prerequisites:
+##  How to access the AI Customer Assistant chatbot
+### Prerequisites:
 Node.js (for the frontend)
 Python 3 (for the backend)
 Virtual Environment:
@@ -93,7 +93,7 @@ Install frontend dependencied:
 5. Type in your question and our AI assistant will be ready to chat!
 
 
-###• Any API keys or configuration needed
+##  Any API keys or configuration needed
 
 Create an API key on Groq
 
@@ -101,12 +101,40 @@ create a .env file under "backend" (see .env.example for the correct format)
 paste the above API key in the appropriate field like this: GROQ_API_KEY=<<key>>
 
 
-###• GitHub repository URL (same as Phase 1)
+##  GitHub repository URL (same as Phase 1)
   - https://github.com/kaveenaram/EECS3311_CourseProject/tree/main
 
 ## - Team Contributions
 
 ### Kaveena Ramkissoon
+  Docker Based Deployment
+  - Set up networking so all containers communicate correctly
+  - Configured a persistent volume for the database
+  - Added environment variables for clean, secure configuration
+  - Documented all port mappings for backend, frontend, and database
+
+
 ### Dulja Ranathunga
+  Front End Build
+  - Enhanced the Phase 1 frontend using React.js, HTML, CSS, and JavaScript to support all core system workflows.
+  - Integrated the Dockerized environment, ensuring the frontend communicates properly with backend and database services.
+  - Connected the AI Customer Assistant to the frontend interface, enabling users to access the chatbot directly within the application.
+
 ### Ha An Do
+  Front End Build
+  - Enhanced the Phase 1 frontend using React.js, HTML, CSS, and JavaScript to support all core system workflows.
+  - Integrated the Dockerized environment, ensuring the frontend communicates properly with backend and database services.
+  - Connected the AI Customer Assistant to the frontend interface, enabling users to access the chatbot directly within the application.
+
 ### Meleena Subasinghe
+  Ai-Based Customer Assistant
+  - Integrated the AI assistant through a secure backend service (no direct client‑side API calls).
+  - Ensured the chatbot is fully connected to the backend and that end‑to‑end communication works reliably.
+  - Made the chatbot accessible from the fronend and ensured all messages route through the backend.
+  - Restricted AI inputs to general platform information and aggregated, non‑personal data.
+  - Ensured AI responses remain helpful and informational without performing automated actions.
+  - Followed strict privacy and safety guidelines so the AI never receives sensitive data such as user details, payments, or booking information.
+  - Implemented the assistant using a compliant LLM API (Groq).
+
+
+
