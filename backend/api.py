@@ -54,69 +54,20 @@ if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
 
 # -------------------------
-# necessary dependancies 
+# necessary dependencies 
 # -------------------------
 
-db = SessionLocal()
-availability_service = AvailabilityService(db)
-booking_service = BookingService(db)
-system_policy = SystemPolicy(db)
-notifier = NotificationService(db)
+admins = {}  # Will be lazily populated on first request
 
-# -------------------------
-# In-memory "database"
-# -------------------------
-users = {
-    "consultant1": Consultant("consultant1", "Alice", "alice@mail.com", "pass")
-}
-
-clients = {
-    "client1": Client("client1", "Bob", "bob@mail.com", "pass"),
-    "client2": Client("client2", "Charlie", "charlie@mail.com", "pass")
-}
-
-# Sample services
-services = {
-    "service1": Service("service1", "Consulting Session", duration=60, price=100, consultant=users["consultant1"]),
-    "service2": Service("service2", "Strategy Meeting", duration=90, price=150, consultant=users["consultant1"])
-}
-
-
-
-consultant = users["consultant1"]
-
-# -------------------------
-# Add timeslots for the consultant
-# -------------------------
-ts1 = TimeSlot("ts1", datetime.now(), datetime.now() + timedelta(hours=1))
-ts2 = TimeSlot("ts2", datetime.now() + timedelta(days=1), datetime.now() + timedelta(days=1, hours=1))
-
-consultant.timeslots.extend([ts1, ts2])
-
-# -------------------------
-# Create bookings via BookingService
-# -------------------------
-booking1 = booking_service.create_booking(
-    client=clients["client1"],
-    consultant=consultant,
-    service=services["service1"],
-    slot=ts1
-)
-
-booking2 = booking_service.create_booking(
-    client=clients["client2"],
-    consultant=consultant,
-    service=services["service2"],
-    slot=ts2
-)
-
-# -------------------------
-# Verify consultant bookings
-# -------------------------
-print("Consultant bookings:", [b.booking_id for b in consultant.bookings])
-
-# Approve consultant for demo
-users["consultant1"].approved = True
+def load_admins_from_db():
+    """Load admins from database - call on first request only"""
+    db = SessionLocal()
+    try:
+        all_admins = db.query(Admin).all()
+        return {admin.user_id: admin for admin in all_admins}
+    except Exception as e:
+        print(f"Could not load admins: {e}")
+        return {}
 
 # -------------------------
 # First API check
@@ -124,21 +75,6 @@ users["consultant1"].approved = True
 @app.route("/")
 def home():
     return "API is running"
-
-# -------------------------
-# load admin
-# -------------------------
-def load_admins():
-    db = SessionLocal()
-    try:
-        all_admins = db.query(Admin).all()
-        admin_dict = {admin.user_id: admin for admin in all_admins}
-        return admin_dict
-    finally:
-        db.close()
-
-# Load admins at startup
-admins = load_admins()
 
 # -------------------------
 # consultant login endpoint
@@ -149,30 +85,34 @@ def consultant_login():
     data = request.get_json(force=True)
     user_id = data.get("user_id")
     password = data.get("password")
-    consultant = users.get(user_id)
+    db = SessionLocal()
+    try:
+        consultant = db.query(Consultant).filter_by(user_id=user_id).first()
+    
+        if not consultant:
+            return jsonify({"success": False, "message": "Consultant not found"}), 404
 
-    if not consultant:
-        return jsonify({"success": False, "message": "Consultant not found"}), 404
+        # Check approval FIRST
+        if not consultant.approved:
+            return jsonify({
+                "success": False,
+                "message": "Consultant not approved yet"
+            }), 403
 
-    # Check approval FIRST
-    if not consultant.approved:
+        # Then check password
+        if consultant.logIn(password):
+            return jsonify({
+                "success": True,
+                "consultant_id": consultant.user_id,
+                "name": consultant.name
+            })
+
         return jsonify({
             "success": False,
-            "message": "Consultant not approved yet"
-        }), 403
-
-    # Then check password
-    if consultant.logIn(password):
-        return jsonify({
-            "success": True,
-            "consultant_id": consultant.user_id,
-            "name": consultant.name
-        })
-
-    return jsonify({
-        "success": False,
-        "message": "Invalid password"
-    }), 401
+            "message": "Invalid password"
+        }), 401
+    finally:
+        db.close()
     
 # -------------------------
 # consultant signup
@@ -188,15 +128,25 @@ def consultant_signup():
     password = data.get("password")
 
     # Check if already exists
-    if user_id in users:
-        return jsonify({
-            "success": False,
-            "message": "User ID already exists"
-        }), 400
+    db = SessionLocal()
+    try:
+        existing_consultant = db.query(Consultant).filter_by(user_id=user_id).first()
+        if existing_consultant:
+            return jsonify({
+                "success": False,
+                "message": "User ID already exists"
+            }), 400
+    finally:
+        db.close()
 
     # Create new consultant (approved = False by default)
     consultant = Consultant(user_id, name, email, password)
-    users[user_id] = consultant
+    db = SessionLocal()
+    try:
+        db.add(consultant)
+        db.commit()
+    finally:
+        db.close()
 
     print(f"New consultant created: {consultant}")
 

@@ -28,11 +28,17 @@ services:
       - FLASK_APP=api:app
       - FLASK_ENV=production
       - DATABASE_URL=mysql+pymysql://${DB_USER}:${DB_PASSWORD}@db:3306/${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
     command: python -m flask run --host=0.0.0.0
     ports:
       - "5001:5000"
     depends_on:
-      - db
+      db: 
+        condition: service_healthy
+    networks:
+      - app-network
 
   # React Frontend
   frontend:
