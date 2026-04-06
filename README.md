@@ -100,6 +100,12 @@ Create an API key on Groq
 create a .env file under "backend" (see .env.example for the correct format)
 paste the above API key in the appropriate field like this: GROQ_API_KEY=<<key>>
 
+## Admin Login Access
+The admin panel is accessible only via the direct URL:
+
+http://localhost:3000/admin-login
+
+This route is not exposed through the main application navigation. As a result, consultants and clients cannot discover or access the admin interface through normal use of the system.
 
 ##  GitHub repository URL (same as Phase 1)
   - https://github.com/kaveenaram/EECS3311_CourseProject/tree/main
@@ -115,13 +121,14 @@ paste the above API key in the appropriate field like this: GROQ_API_KEY=<<key>>
 
 
 ### Dulja Ranathunga
-  Front End Build
-  - Enhanced the Phase 1 frontend using React.js, HTML, CSS, and JavaScript to support all core system workflows.
+  Front End Build - Consultant UI and Admin UI 
+  - Enhanced the Phase 1 frontend using React.js, HTML, CSS, Bootstrap and JavaScript to support all core system workflows.
+  - Applied custom CSS styling and layout design to improve visual consistency, spacing, and overall user experience across the application.
   - Integrated the Dockerized environment, ensuring the frontend communicates properly with backend and database services.
-  - Connected the AI Customer Assistant to the frontend interface, enabling users to access the chatbot directly within the application.
+  - Made minor UI refinements and enhancements to the integrated AI Customer Assistant in the frontend interface.
 
 ### Ha An Do
-  Front End Build
+  Front End Build - Client UI 
   - Enhanced the Phase 1 frontend using React.js, HTML, CSS, and JavaScript to support all core system workflows.
   - Integrated the Dockerized environment, ensuring the frontend communicates properly with backend and database services.
   - Connected the AI Customer Assistant to the frontend interface, enabling users to access the chatbot directly within the application.
