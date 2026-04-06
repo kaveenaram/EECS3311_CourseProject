@@ -6,6 +6,7 @@ from patterns.state.requested_state import RequestedState
 from database.db import Base
 from patterns.observer.subject import Subject
 import enum
+from entities.payment_result import PaymentResult
 
 """
 Booking Class: Represents a booking made by a client for a consulting session with a consultant, including details like client, consultant, service, timeslot, and booking state.

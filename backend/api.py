@@ -447,6 +447,65 @@ def chat_with_ai():
     return jsonify({"reply": reply}), 200
 
 # -------------------------
+# Client login
+# -------------------------
+@app.route("/api/client/login", methods=["POST"])
+def client_login():
+    db = SessionLocal()
+    try:
+        data = request.get_json()
+        user_id = data.get("user_id")
+        password = data.get("password")
+
+        client = db.query(Client).filter_by(user_id=user_id).first()
+
+        if not client:
+            return jsonify({"success": False, "message": "Client not found"}), 404
+
+        if client.logIn(password):
+            return jsonify({
+                "success": True,
+                "client_id": client.user_id,
+                "name": client.name
+            }), 200
+
+        return jsonify({"success": False, "message": "Invalid password"}), 401
+    finally:
+        db.close()
+
+# -------------------------
+# Client Signup
+# -------------------------
+@app.route("/api/client/signup", methods=["POST"])
+def client_signup():
+    db = SessionLocal()
+    try:
+        data = request.get_json()
+
+        user_id = data.get("user_id")
+        name = data.get("name")
+        email = data.get("email")
+        password = data.get("password")
+
+        existing = db.query(Client).filter_by(user_id=user_id).first()
+        if existing:
+            return jsonify({
+                "success": False,
+                "message": "User ID already exists"
+            }), 400
+
+        client = Client(user_id, name, email, password)
+        db.add(client)
+        db.commit()
+
+        return jsonify({
+                "success": True,
+                "message": "Client registered successfully."
+            }), 201
+    finally:
+        db.close()
+
+# -------------------------
 # Run
 # -------------------------
 if __name__ == "__main__":

@@ -23,8 +23,7 @@ def create_superadmin():
                 email=superadmin_email,
                 password="pass",  # hash in production
                 system_policy=system_policy,
-                notifier=notifier,
-                protected=True
+                notifier=notifier
             )
 
             db.add(superadmin)

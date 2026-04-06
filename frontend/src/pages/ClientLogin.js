@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { clientLogin } from "../api/clientApi";
+import { loginClient } from "../services/api";
 import "./Client.css";
 
 function ClientLogin() {
@@ -9,7 +9,7 @@ function ClientLogin() {
   const navigate = useNavigate();
 
   async function handleLogin() {
-    const res = await clientLogin({ user_id, password });
+    const res = await loginClient(user_id, password);
 
     if (res.success) {
       localStorage.setItem("client_id", user_id);

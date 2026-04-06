@@ -110,3 +110,50 @@ export async function signupConsultant(userData) {
     return { success: false, message: "Network error" };
   }
 }
+
+// Admin login
+export async function loginAdmin(userId, password) {
+  try {
+    const res = await postData("api/admin/login", { user_id: userId, password });
+    if (res.success) {
+      return { 
+        success: true, 
+        admin: { id: res.admin_id, name: res.name } 
+      };
+    } else {
+      return { success: false, admin: null };
+    }
+  } catch (err) {
+    console.error("Admin login error:", err);
+    return { success: false, admin: null };
+  }
+}
+
+// Client login
+export async function loginClient(userId, password) {
+  try {
+    const res = await postData("api/client/login", { user_id: userId, password });
+    if (res.success) {
+      return { 
+        success: true, 
+        client: { id: res.client_id, name: res.name } 
+      };
+    } else {
+      return { success: false, client: null };
+    }
+  } catch (err) {
+    console.error("Client login error:", err);
+    return { success: false, client: null };
+  }
+}
+
+// Client signup
+export async function signupClient(userData) {
+  try {
+    const res = await postData("api/client/signup", userData);
+    return res;
+  } catch (err) {
+    console.error("Client signup error:", err);
+    return { success: false, message: "Network error" };
+  }
+}

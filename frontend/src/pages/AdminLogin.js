@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { loginAdmin } from "../services/api";
 import "./ConsultantLogin.css";
 
 export default function AdminLogin() {
@@ -9,21 +10,13 @@ export default function AdminLogin() {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:5000/api/admin/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ user_id, password })
-      });
-
-      const data = await res.json();
+      const data = await loginAdmin(user_id, password);
 
       if (data.success) {
         console.log("Admin logged in:", data);
         window.location.href = "/admin-dashboard";
       } else {
-        alert(data.message);
+        alert("Invalid credentials");
       }
     } catch (err) {
       console.error(err);

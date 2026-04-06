@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { clientSignup } from "../api/clientApi";
+import { signupClient } from "../services/api";
 import "./Client.css";
 
 function ClientSignup() {
@@ -18,9 +18,13 @@ function ClientSignup() {
   }
 
   async function handleSignup() {
-    await clientSignup(form);
-    alert("Account created!");
-    navigate("/client-login");
+    const res = await signupClient(form);
+    if (res.success) {
+      alert("Account created! You can now login.");
+      navigate("/client-login");
+    } else {
+      alert(res.message || "Signup failed");
+    }
   }
 
   return (
