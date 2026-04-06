@@ -67,7 +67,58 @@ Use Cases Covered:
 # Team9_Phase2 EECS-3311 Course Project
 
 ##  How to build and run with Docker
+To run the application using Docker and Docker Compose, follow these steps:
 
+1. Build the Docker images
+docker-compose build
+
+This will create images for the backend, frontend, and database services.
+
+2. Start the containers
+docker-compose up
+
+This will start all services:
+
+Backend API → http://localhost:5000
+Frontend UI → http://localhost:3000
+Database → accessible within Docker network
+
+3. Stop the containers
+docker-compose down
+
+This will stop and remove all containers while keeping the data volumes intact.
+
+4. Rebuild after code changes
+
+If you make changes to your code, rebuild the images:
+
+docker-compose up --build
+5. Notes
+Ensure Docker and Docker Compose are installed on your system.
+The backend service will automatically initialize the database and create the superadmin on first run.
+Frontend communicates with the backend via the Docker network, no additional configuration is needed.
+
+## To run on Windows 
+1. Open PowerShell or Command Prompt and navigate to your project folder.
+2. Build Docker images
+docker-compose build
+3. Start all containers
+docker-compose up
+
+Services will run on:
+
+Backend API: http://localhost:5000
+Frontend UI: http://localhost:3000
+Database: internal Docker network
+
+4. Stop containers
+docker-compose down
+5. Rebuild after code changes
+docker-compose up --build
+6. Notes
+Make sure Docker Desktop is installed and running.
+Backend auto-initializes the database and creates the superadmin.
+Frontend connects automatically to the backend within the Docker network.
 
 
 ##  How to access the AI Customer Assistant chatbot
