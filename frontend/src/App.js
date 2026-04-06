@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-route
 
 import Home from './pages/Home';
 import ClientLogin from './pages/ClientLogin';
+import ClientSignup from './pages/ClientSignup';
 import ConsultantLogin from './pages/ConsultantLogin';
 import ConsultantDashboard from './pages/ConsultantDashboard';
 import ConsultantSignup from "./pages/ConsultantSignup";

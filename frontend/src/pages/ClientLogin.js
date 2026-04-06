@@ -1,31 +1,36 @@
-import "./ConsultantLogin.css";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { clientLogin } from "../api/clientApi";
+import "./Client.css";
 
-function ClientLogin({ onLoginSuccess }) {
+function ClientLogin() {
+  const [user_id, setUserId] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  function handleLogin() {
-    if (onLoginSuccess) {
-      onLoginSuccess();
+  async function handleLogin() {
+    const res = await clientLogin({ user_id, password });
+
+    if (res.success) {
+      localStorage.setItem("client_id", user_id);
+      navigate("/client-dashboard");
+    } else {
+      alert("Invalid login");
     }
   }
 
   return (
     <div className="full-page">
-      <div className="login-box text-white">
-        <h2 className="mb-5 text-white text-center">Client Login</h2>
+      <div className="login-box">
+        <h2>Client Login</h2>
 
-        <input className="form-control" placeholder="username" />
-        <input className="form-control" placeholder="password" type="password" />
+        <input placeholder="User ID" onChange={e => setUserId(e.target.value)} />
+        <input type="password" placeholder="Password" onChange={e => setPassword(e.target.value)} />
 
-        <button
-          className="btn btn-light mt-3"
-          onClick={handleLogin}
-        >
-          Login
-        </button>
+        <button onClick={handleLogin}>Login</button>
       </div>
     </div>
   );
-
 }
 
 export default ClientLogin;
