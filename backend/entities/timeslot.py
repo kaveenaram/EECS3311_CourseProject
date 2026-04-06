@@ -10,8 +10,8 @@ Consultants can create and manage their time slots, and clients can view availab
 class TimeSlot(Base):
     __tablename__ = "timeslots"
 
-    slot_id = Column(String, primary_key=True)
-    consultant_id = Column(String, ForeignKey('consultants.user_id'))
+    slot_id = Column(String(255), primary_key=True)
+    consultant_id = Column(String(255), ForeignKey('consultants.user_id'))
     start_time = Column(DateTime)
     end_time = Column(DateTime)
     available = Column(Boolean, default=True)

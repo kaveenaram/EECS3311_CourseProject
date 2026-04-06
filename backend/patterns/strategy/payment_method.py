@@ -13,9 +13,9 @@ Concrete implementations will include CreditCard, DebitCard, and BankTransfer, e
 class PaymentMethod(Base):
     __tablename__ = "payment_methods"
     
-    id = Column(String, primary_key=True)
-    type = Column(String)
-    client_id = Column(String, ForeignKey('clients.user_id'))
+    id = Column(String(255), primary_key=True)
+    type = Column(String(50))
+    client_id = Column(String(255), ForeignKey('clients.user_id'))
     
     client = relationship("Client", back_populates="payment_methods")
     

@@ -10,7 +10,7 @@ Client Class: User who browses services and books consultating sessions.
 class Client(User):
     __tablename__ = "clients"
 
-    user_id = Column(String, ForeignKey('users.user_id'), primary_key=True)
+    user_id = Column(String(255), ForeignKey('users.user_id'), primary_key=True)
     payment_methods = relationship("PaymentMethod", back_populates="client")
     bookings = relationship("Booking", back_populates="client", foreign_keys='Booking.client_id')
 

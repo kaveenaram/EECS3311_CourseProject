@@ -11,7 +11,7 @@ Admin Class: Platform administrator who oversees consultants and system policies
 class Admin(User):
     __tablename__ = "admins"
 
-    user_id = Column(String, ForeignKey('users.user_id'), primary_key=True)
+    user_id = Column(String(255), ForeignKey('users.user_id'), primary_key=True)
 
     __mapper_args__ = {
         'polymorphic_identity': 'admin'

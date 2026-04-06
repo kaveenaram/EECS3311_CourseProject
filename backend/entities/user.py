@@ -10,11 +10,11 @@ Both Admins, Consultants, and Clients will inherit from this class.
 class User(Base):
     __tablename__ = "users"
 
-    user_id = Column(String, primary_key=True)
-    name = Column(String)
-    email = Column(String, unique=True)
-    password = Column(String)
-    role = Column(String)
+    user_id = Column(String(255), primary_key=True)
+    name = Column(String(255))
+    email = Column(String(255), unique=True)
+    password = Column(String(255))
+    role = Column(String(50))
 
     __mapper_args__ = {
         'polymorphic_on': role,

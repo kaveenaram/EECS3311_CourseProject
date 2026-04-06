@@ -10,8 +10,8 @@ PaymentResult Class: Represents the outcome of a payment transaction, including 
 
 class PaymentResult(Base):
   __tablename__ = "payment_results"
-  user_id = Column(String, primary_key=True)
-  booking_id = Column(String, ForeignKey('bookings.booking_id'))
+  user_id = Column(String(255), primary_key=True)
+  booking_id = Column(String(255), ForeignKey('bookings.booking_id'))
   success = Column(Boolean)
   amount = Column(Float)
   timestamp = Column(DateTime)

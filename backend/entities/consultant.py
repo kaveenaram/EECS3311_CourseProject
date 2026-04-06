@@ -10,7 +10,7 @@ Consultant Class: Service provider who offers consulting sessions and manages av
 class Consultant(User):
     __tablename__ = "consultants"
 
-    user_id = Column(String, ForeignKey('users.user_id'), primary_key=True)
+    user_id = Column(String(255), ForeignKey('users.user_id'), primary_key=True)
     approved = Column(Boolean, default=False)
     services = relationship("Service", back_populates="consultant")
     timeslots = relationship("TimeSlot", back_populates="consultant")

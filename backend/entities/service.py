@@ -10,12 +10,12 @@ Service Class: Represents a consulting service offered by a consultant, includin
 class Service(Base):
     __tablename__ = "services"
 
-    service_id = Column(String, primary_key=True)
-    name = Column(String)
-    description = Column(String)
+    service_id = Column(String(255), primary_key=True)
+    name = Column(String(255))
+    description = Column(String(1000))
     duration = Column(Integer)  # duration in minutes
     price = Column(Float)
-    consultant_id = Column(String, ForeignKey('consultants.user_id'))
+    consultant_id = Column(String(255), ForeignKey('consultants.user_id'))
 
     consultant = relationship("Consultant", back_populates="services")
     bookings = relationship("Booking", back_populates="service")

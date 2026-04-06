@@ -10,10 +10,10 @@ Admins can update these policies, and they are used to govern how the platform o
 class SystemPolicy(Base):
     __tablename__ = "system_policies"
 
-    id = Column(String, primary_key=True)
-    cancellation_rules = Column(String)
-    pricing_strategy = Column(String)
-    refund_policy = Column(String)
+    id = Column(String(255), primary_key=True)
+    cancellation_rules = Column(String(1000))
+    pricing_strategy = Column(String(1000))
+    refund_policy = Column(String(1000))
     
     # SystemPolicy constructor initializes cancellation rules, pricing strategy, and refund policy with default empty values
     def __init__(self, cancellationRules = "", pricingStrategy = "", refundPolicy=""):

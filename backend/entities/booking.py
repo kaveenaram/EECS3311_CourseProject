@@ -24,11 +24,11 @@ class BookingState(enum.Enum):
 class Booking(Base, Subject):
     __tablename__ = "bookings"
 
-    booking_id = Column(String, primary_key=True)
-    client_id = Column(String, ForeignKey('clients.user_id'))
-    consultant_id = Column(String, ForeignKey('consultants.user_id'))
-    service_id = Column(String, ForeignKey('services.service_id'))
-    timeslot_id = Column(String, ForeignKey('timeslots.slot_id'))
+    booking_id = Column(String(255), primary_key=True)
+    client_id = Column(String(255), ForeignKey('clients.user_id'))
+    consultant_id = Column(String(255), ForeignKey('consultants.user_id'))
+    service_id = Column(String(255), ForeignKey('services.service_id'))
+    timeslot_id = Column(String(255), ForeignKey('timeslots.slot_id'))
     state = Column(Enum(BookingState), default=BookingState.requested)
     
 
