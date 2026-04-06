@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { signupConsultant } from "../services/api";
 import "./ConsultantSignup.css";
 
 function ConsultantSignup() {
@@ -19,25 +20,17 @@ function ConsultantSignup() {
     });
   }
 
-  async function handleSubmit(e) {
+    async function handleSubmit(e) {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:5000/api/consultant/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(form)
-      });
-
-      const data = await res.json();
+      const data = await signupConsultant(form);
 
       if (data.success) {
         alert("Signup successful! Waiting for admin approval.");
         navigate("/consultant-login");
       } else {
-        alert(data.message);
+        alert(data.message || "Signup failed");
       }
     } catch (err) {
       console.error(err);

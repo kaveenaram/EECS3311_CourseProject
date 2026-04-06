@@ -1,5 +1,19 @@
 const BASE_URL = process.env.REACT_APP_API_URL || "http://backend:5000";
 
+// Test connection
+export async function testConnection() {
+  console.log("BASE_URL:", BASE_URL);
+  try {
+    const res = await fetch(`${BASE_URL}/api/health`);
+    const data = await res.json();
+    console.log("Health check response:", data);
+    return data;
+  } catch (err) {
+    console.error("Health check failed:", err);
+    return null;
+  }
+}
+
 export async function getData(endpoint) {
     const res = await fetch(`${BASE_URL}/${endpoint}`);
     return res.json();
@@ -84,4 +98,15 @@ export async function confirmBooking(bookingId) {
 
 export async function rejectBooking(bookingId) {
   return await postData(`api/bookings/${bookingId}/reject`);
+}
+
+// Consultant signup
+export async function signupConsultant(userData) {
+  try {
+    const res = await postData("api/consultant/signup", userData);
+    return res;
+  } catch (err) {
+    console.error("Signup error:", err);
+    return { success: false, message: "Network error" };
+  }
 }
