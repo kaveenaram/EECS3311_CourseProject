@@ -31,6 +31,7 @@ function App() {
 
         {/* Client */}
         <Route path="/client-login" element={<ClientLoginWrapper />} />
+        <Route path="/client-signup" element={<ClientSignup />} />
         <Route path="/client-dashboard" element={<ClientDashboard />} />
         <Route path="/services" element={<BrowseServicesPage />} />
         <Route path="/bookings" element={<BookingHistoryPage />} />

@@ -130,7 +130,6 @@ This route is not exposed through the main application navigation. As a result, 
 ### Ha An Do
   Front End Build - Client UI 
   - Enhanced the Phase 1 frontend using React.js, HTML, CSS, and JavaScript to support all core system workflows.
-  - Integrated the Dockerized environment, ensuring the frontend communicates properly with backend and database services.
   - Connected the AI Customer Assistant to the frontend interface, enabling users to access the chatbot directly within the application.
 
 ### Meleena Subasinghe
