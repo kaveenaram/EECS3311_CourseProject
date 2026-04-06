@@ -30,6 +30,12 @@ CORS(app)
 def startup():
     init_db()
 
+    # -------------------------
+    # create superadmin
+    # -------------------------
+
+    create_superadmin()
+
 @app.route('/api/health', methods=['GET'])
 def health():
     return {'status': 'ok'}, 200
@@ -53,12 +59,6 @@ if __name__ == '__main__':
 
 # call db = SessionLocal() every time you need a db session and then close it when done (try/finally or with statement)
 # initalize services with db session when needed (e.g. booking_service = BookingService(db))
-
-# -------------------------
-# create superadmin
-# -------------------------
-
-create_superadmin()
 
 # -------------------------
 # In-memory "database"
