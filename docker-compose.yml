@@ -28,6 +28,7 @@ services:
     environment:
       DATABASE_URL: mysql+pymysql://team9user:Team9Password123@db:3306/Team9-ConsultingService
       FLASK_ENV: development
+      GROQ_API_KEY: ${GROQ_API_KEY}
     depends_on:
       db:
         condition: service_healthy
